@@ -101,12 +101,10 @@
 		69063DBA24636A5A00136732 /* WhatsToEat */ = {
 			isa = PBXGroup;
 			children = (
-				69063DBB24636A5A00136732 /* AppDelegate.swift */,
-				69063DBD24636A5A00136732 /* SceneDelegate.swift */,
-				69063DBF24636A5A00136732 /* ViewController.swift */,
-				69063DC124636A5A00136732 /* Main.storyboard */,
+				69063DEE24636E0300136732 /* Features */,
+				69063DF024636E2100136732 /* Utilities */,
+				69063DF424636EC400136732 /* Models */,
 				69063DC724636A5F00136732 /* Assets.xcassets */,
-				69063DC924636A5F00136732 /* LaunchScreen.storyboard */,
 				69063DCC24636A5F00136732 /* Info.plist */,
 				69063DC424636A5A00136732 /* WhatsToEat.xcdatamodeld */,
 			);
@@ -129,6 +127,56 @@
 				69063DE224636A5F00136732 /* Info.plist */,
 			);
 			path = WhatsToEatUITests;
+			sourceTree = "<group>";
+		};
+		69063DEE24636E0300136732 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				69063DBB24636A5A00136732 /* AppDelegate.swift */,
+				69063DBD24636A5A00136732 /* SceneDelegate.swift */,
+				69063DC924636A5F00136732 /* LaunchScreen.storyboard */,
+				69063DC124636A5A00136732 /* Main.storyboard */,
+				69063DF124636E5D00136732 /* Home */,
+				69063DF324636E7A00136732 /* RestaurantDetail */,
+				69063DF224636E6500136732 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		69063DF024636E2100136732 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		69063DF124636E5D00136732 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				69063DBF24636A5A00136732 /* ViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		69063DF224636E6500136732 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		69063DF324636E7A00136732 /* RestaurantDetail */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = RestaurantDetail;
+			sourceTree = "<group>";
+		};
+		69063DF424636EC400136732 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
