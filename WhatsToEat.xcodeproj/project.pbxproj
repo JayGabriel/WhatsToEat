@@ -17,6 +17,8 @@
 		69063DE124636A5F00136732 /* WhatsToEatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DE024636A5F00136732 /* WhatsToEatUITests.swift */; };
 		69063DF62463782500136732 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DF52463782500136732 /* HomeViewModel.swift */; };
 		69063DF82464D24E00136732 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DF72464D24E00136732 /* SearchView.swift */; };
+		69063DFB24665D2400136732 /* YelpAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DFA24665D2400136732 /* YelpAPI.swift */; };
+		69063DFD24665DD400136732 /* YelpAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DFC24665DD400136732 /* YelpAPIConstants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		69063DE224636A5F00136732 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		69063DF52463782500136732 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		69063DF72464D24E00136732 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		69063DFA24665D2400136732 /* YelpAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpAPI.swift; sourceTree = "<group>"; };
+		69063DFC24665DD400136732 /* YelpAPIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpAPIConstants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +110,7 @@
 				69063DEE24636E0300136732 /* Features */,
 				69063DF024636E2100136732 /* Utilities */,
 				69063DF424636EC400136732 /* Models */,
+				69063DF924665D1500136732 /* Networking */,
 				69063DC724636A5F00136732 /* Assets.xcassets */,
 				69063DCC24636A5F00136732 /* Info.plist */,
 				69063DC424636A5A00136732 /* WhatsToEat.xcdatamodeld */,
@@ -180,6 +185,15 @@
 			children = (
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		69063DF924665D1500136732 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				69063DFA24665D2400136732 /* YelpAPI.swift */,
+				69063DFC24665DD400136732 /* YelpAPIConstants.swift */,
+			);
+			path = Networking;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,7 +328,9 @@
 			files = (
 				69063DC024636A5A00136732 /* HomeViewController.swift in Sources */,
 				69063DBC24636A5A00136732 /* AppDelegate.swift in Sources */,
+				69063DFD24665DD400136732 /* YelpAPIConstants.swift in Sources */,
 				69063DBE24636A5A00136732 /* SceneDelegate.swift in Sources */,
+				69063DFB24665D2400136732 /* YelpAPI.swift in Sources */,
 				69063DF62463782500136732 /* HomeViewModel.swift in Sources */,
 				69063DF82464D24E00136732 /* SearchView.swift in Sources */,
 				69063DC624636A5A00136732 /* WhatsToEat.xcdatamodeld in Sources */,

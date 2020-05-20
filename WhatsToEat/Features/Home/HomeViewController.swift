@@ -16,6 +16,8 @@ class HomeViewController: UIViewController {
 
     // MARK: - Properties
     
+    // MARK: UI Elements
+    
     private let mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.translatesAutoresizingMaskIntoConstraints = false
@@ -43,13 +45,17 @@ class HomeViewController: UIViewController {
     
     private lazy var resultsTableView: UITableView = {
         let tableview = UITableView()
+        tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableview.translatesAutoresizingMaskIntoConstraints = false
         tableview.isHidden = true
         tableview.backgroundColor = .white
         tableview.delegate = self
+        tableview.dataSource = self
         return tableview
     }()
         
+    // MARK: View Model
+            
     private var viewModel: HomeViewModel
     
     // MARK: - Lifecycle
@@ -57,6 +63,7 @@ class HomeViewController: UIViewController {
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        viewModel.delegate = self
     }
 
     required init?(coder: NSCoder) {
@@ -114,12 +121,13 @@ class HomeViewController: UIViewController {
         animateTableView(shouldShow: false)
     }
     
-    private func searchButtonTapped() {
-        viewModel.searchButtonTapped()
-        animateTableView(shouldShow: true)
-    }
+    // MARK: - Table View
     
-    // MARK: - Animation
+    private func updateResultsTableViewData() {
+        DispatchQueue.main.async {
+            self.resultsTableView.reloadData()
+        }
+    }
     
     private func animateTableView(shouldShow: Bool) {
         if shouldShow {
@@ -148,24 +156,29 @@ class HomeViewController: UIViewController {
     }
 }
 
-extension HomeViewController: CLLocationManagerDelegate {
-    
+extension HomeViewController: HomeViewModelDelegate {
+    func didReceiveRestaurantsData() {
+        updateResultsTableViewData()
+    }
 }
 
 extension HomeViewController: SearchViewDelegate {
     func didEnterSearch(keyword: String, location: String) {
+        updateResultsTableViewData()
         animateTableView(shouldShow: true)
-        viewModel.searchButtonTapped()
+        viewModel.searchButtonTapped(keywords: keyword)
     }
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return viewModel.data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel?.text = viewModel.data[indexPath.row]
+        return cell
     }
 }
 
