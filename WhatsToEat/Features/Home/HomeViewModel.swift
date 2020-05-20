@@ -7,28 +7,66 @@
 //
 
 import Foundation
-import MapKit
 
-class HomeViewModel {
+class HomeViewModel: NSObject {
     
     // MARK: - Properties
 
-    private var locationManager: CLLocationManager
+    // MARK: YelpAPI
     
+    private var yelpAPI: YelpAPI
+    
+    // MARK: Delegate
+    
+    var delegate: HomeViewModelDelegate?
+    
+    // MARK: Data Source
+    
+    private(set) var data = [String]()
+
     // MARK: - Lifecycle
     
-    init(locationManager: CLLocationManager = CLLocationManager()) {
-        self.locationManager = locationManager
+    init(yelpAPI: YelpAPI = .shared) {
+        self.yelpAPI = yelpAPI
+        super.init()
     }
-    
-    // MARK: - Input
+}
+
+// MARK: - View Controller Input
+extension HomeViewModel {
     
     public func settingsButtonTapped() {
+        
     }
     
     public func refreshButtonTapped() {
+        
     }
     
-    public func searchButtonTapped() {
+    public func searchButtonTapped(keywords: String) {
+        
+        // TODO: Calculate actual coordinates
+        let latitude = 47.608013
+        let longitude = -122.335167
+        
+        yelpAPI.searchForRestaurants(keywords: keywords, limit: 10, latitude: latitude, longitude: longitude) {
+            (success, error, results) in
+            
+            var names = [String]()
+            if let results = results {
+                for r in results {
+                    if let name = r["name"] {
+                        names.append(name)
+                    }
+                }
+            }
+            self.data = names
+            self.delegate?.didReceiveRestaurantsData()
+        }
     }
+}
+
+// MARK: - View Model Output
+protocol HomeViewModelDelegate {
+    func didReceiveRestaurantsData() -> Void
 }
