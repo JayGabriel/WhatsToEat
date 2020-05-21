@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 protocol SearchViewDelegate {
-    func didEnterSearch(keyword: String, location: String) -> Void
+    func didEnterSearch(keyword: String, location: String?) -> Void
 }
 
 class SearchView: UIView {
@@ -24,8 +24,25 @@ class SearchView: UIView {
     
     var delegate: SearchViewDelegate?
     
-    public private(set) var keywordText = ""
-    public private(set) var locationText = ""
+    var keywordText: String = "Find something to eat" {
+        didSet {
+            keywordTextField.text = keywordText
+            self.updateCompactTitle()
+        }
+    }
+    
+    var locationText: String = "" {
+        didSet {
+            locationTextField.text = locationText
+            self.updateCompactTitle()
+        }
+    }
+    
+    var isEditing: Bool {
+        return keywordTextField.isFirstResponder || locationTextField.isFirstResponder
+    }
+    
+    private var previousSearchValue: String? = nil
     
     private let compactTextButton: UIButton = {
         let button = UIButton(type: .system)
@@ -118,6 +135,10 @@ class SearchView: UIView {
         ])
     }
     
+    private func updateCompactTitle() {
+        compactTextButton.setTitle("\(keywordText) in \(locationText)", for: .normal)
+    }
+    
     @objc func expand() {
         isExpanded = true
         
@@ -125,20 +146,22 @@ class SearchView: UIView {
         self.textFieldStackView.alpha = 0
         self.textFieldStackView.isHidden = false
         
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0.0,
-            options: .curveEaseInOut,
-            animations: {
-                self.superview?.layoutIfNeeded()
-                self.compactTextButton.alpha = 0
-                self.textFieldStackView.alpha = 1
-            },
-            completion: { _ in
-                self.compactTextButton.isHidden = true
-                self.keywordTextField.becomeFirstResponder()
-            }
-        )
+        DispatchQueue.main.async {
+            UIView.animate(
+                withDuration: 0.2,
+                delay: 0.0,
+                options: .curveEaseInOut,
+                animations: {
+                    self.superview?.layoutIfNeeded()
+                    self.compactTextButton.alpha = 0
+                    self.textFieldStackView.alpha = 1
+                },
+                completion: { _ in
+                    self.compactTextButton.isHidden = true
+                    self.keywordTextField.becomeFirstResponder()
+                }
+            )
+        }
         compactTextButton.isHidden = true
         textFieldStackView.isHidden = false
     }
@@ -153,19 +176,21 @@ class SearchView: UIView {
         compactTextButton.isHidden = false
         compactTextButton.alpha = 0
 
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0.0,
-            options: .curveEaseInOut,
-            animations: {
-                self.superview?.layoutIfNeeded()
-                self.compactTextButton.alpha = 1
-                self.textFieldStackView.alpha = 0
-            },
-            completion: { _ in
-                self.textFieldStackView.isHidden = true
-            }
-        )
+        DispatchQueue.main.async {
+            UIView.animate(
+                withDuration: 0.2,
+                delay: 0.0,
+                options: .curveEaseInOut,
+                animations: {
+                    self.superview?.layoutIfNeeded()
+                    self.compactTextButton.alpha = 1
+                    self.textFieldStackView.alpha = 0
+                },
+                completion: { _ in
+                    self.textFieldStackView.isHidden = true
+                }
+            )
+        }
     }
 }
 
@@ -174,13 +199,12 @@ extension SearchView: UITextFieldDelegate {
         if string == "\n" {
             guard
                 let keywordText = keywordTextField.text,
-                let locationText = locationTextField.text,
-                !keywordText.isEmpty,
-                !locationText.isEmpty else { return false }
+                !keywordText.isEmpty else {
+                    return false
+            }
             self.contract()
-            
-            compactTextButton.setTitle("\(keywordText) in \(locationText)", for: .normal)
-            self.delegate?.didEnterSearch(keyword: keywordText, location: locationText)
+            self.updateCompactTitle()
+            self.delegate?.didEnterSearch(keyword: keywordText, location: locationTextField.text)
         }
         
         return true

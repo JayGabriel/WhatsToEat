@@ -18,9 +18,10 @@ class HomeViewController: UIViewController {
     
     // MARK: UI Elements
     
-    private let mapView: MKMapView = {
+    private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.translatesAutoresizingMaskIntoConstraints = false
+        
         return mapView
     }()
     
@@ -74,6 +75,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupConstraints()
+        viewModel.viewDidLoad()
     }
     
     // MARK: - Layout
@@ -88,8 +90,8 @@ class HomeViewController: UIViewController {
         navigationItem.rightBarButtonItem = refreshButton
         
         view.addSubview(mapView)
-        view.addSubview(searchView)
         view.addSubview(resultsTableView)
+        view.addSubview(searchView)
     }
     
     private func setupConstraints() {
@@ -118,7 +120,7 @@ class HomeViewController: UIViewController {
     
     @objc private func refreshButtonTapped() {
         viewModel.refreshButtonTapped()
-        animateTableView(shouldShow: false)
+        animateTableView(shouldShow: resultsTableView.isHidden)
     }
     
     // MARK: - Table View
@@ -160,13 +162,26 @@ extension HomeViewController: HomeViewModelDelegate {
     func didReceiveRestaurantsData() {
         updateResultsTableViewData()
     }
+    
+    func didUpdateRegion(region: MKCoordinateRegion) {
+        DispatchQueue.main.async {
+            self.mapView.setRegion(region, animated: true)
+        }
+    }
+    
+    func didChangeCurrentKeywordsString() {
+        searchView.keywordText = viewModel.currentSearchKeywordsString ?? ""
+    }
+    
+    func didChangeCurrentLocationString() {
+        searchView.locationText = viewModel.currentSearchLocationString ?? ""
+    }
 }
 
 extension HomeViewController: SearchViewDelegate {
-    func didEnterSearch(keyword: String, location: String) {
+    func didEnterSearch(keyword: String, location: String?) {
         updateResultsTableViewData()
-        animateTableView(shouldShow: true)
-        viewModel.searchButtonTapped(keywords: keyword)
+        viewModel.searchButtonTapped(keywordText: keyword, locationText: location)
     }
 }
 
