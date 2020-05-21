@@ -28,7 +28,7 @@ class YelpAPI {
                               limit: Int,
                               latitude: Double,
                               longitude: Double,
-                              completion: @escaping(_ success: Bool, _ error: Error?, _ results: [[String: String]]?) -> Void) {
+                              completion: @escaping(_ success: Bool, _ error: Error?, _ results: [Restuarant]) -> Void) {
         
         if self.latitude == latitude && self.longitude == longitude {
             if pageOffset < resultsCount - limit {
@@ -60,7 +60,7 @@ class YelpAPI {
         urlComponents?.queryItems = queryItems
         
         guard let url = urlComponents?.url else {
-            completion(false, nil, nil)
+            completion(false, nil, [])
             return
         }
         
@@ -70,12 +70,12 @@ class YelpAPI {
         let session = URLSession.shared
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             if let error = error {
-                completion(false, error, nil)
+                completion(false, error, [])
                 return
             }
             
             guard let data = data else {
-                completion(false, error, nil)
+                completion(false, error, [])
                 return
             }
             
@@ -83,30 +83,30 @@ class YelpAPI {
             do {
                 parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: AnyObject]
             } catch {
-                completion(false, error, nil)
+                completion(false, error, [])
                 return
             }
                        
             guard let totalResultsCount = parsedResult[YelpAPIConstants.YelpResponseKeys.total] as? Int else {
-                completion(false, error, nil)
+                completion(false, error, [])
                 return
             }
             
             self.resultsCount = totalResultsCount
             
             guard let restaurants = parsedResult[YelpAPIConstants.YelpResponseKeys.businesses] as? [[String: AnyObject]] else {
-                completion(false, error, nil)
+                completion(false, error, [])
                 return
             }
             
-            var formattedResults = [[String: String]]()
+            var formattedResults = [Restuarant]()
             restaurants.forEach { restaurant in
                 guard
                     let id = restaurant[YelpAPIConstants.YelpResponseKeys.id] as? String,
                     let name = restaurant[YelpAPIConstants.YelpResponseKeys.name] as? String,
                     let coordinates = restaurant[YelpAPIConstants.YelpResponseKeys.coordinates] as? [String:Double],
-                    let lat = coordinates[YelpAPIConstants.YelpResponseKeys.latitude],
-                    let lon = coordinates[YelpAPIConstants.YelpResponseKeys.longitude],
+                    let restraurantLatitude = coordinates[YelpAPIConstants.YelpResponseKeys.latitude],
+                    let restaurantLongitude = coordinates[YelpAPIConstants.YelpResponseKeys.longitude],
                     let location = restaurant[YelpAPIConstants.YelpResponseKeys.location] as? [String:AnyObject],
                     let addressArray = location[YelpAPIConstants.YelpResponseKeys.display_address] as? [String],
                     let distance = restaurant[YelpAPIConstants.YelpResponseKeys.distance] as? Double,
@@ -118,7 +118,7 @@ class YelpAPI {
                     let categories = restaurant[YelpAPIConstants.YelpResponseKeys.categories],
                     let mainCategory = categories[0] as? [String:String],
                     let mainCategoryTitle = mainCategory[YelpAPIConstants.YelpResponseKeys.title] else {
-                        completion(false, error, nil)
+                        completion(false, error, [])
                         return
                 }
                 
@@ -130,22 +130,21 @@ class YelpAPI {
                 }
                 
                 // The extracted information is stored in a dictionary and is passed back to the calling controller.
-                formattedResults.append([
-                    "id": id,
-                    "latitude": String(lat),
-                    "longitude": String(lon),
-                    "distance": String(format: "%.2f", distance * 0.000621371),
-                    "mainCategory": mainCategoryTitle,
-                    "name": name,
-                    "address": addressArray.first!,
-                    "adminArea": addressArray.last!,
-                    "phone": phone,
-                    "rating": String(rating),
-                    "reviewCount": String(ratingCount),
-                    "previewImageURL": previewImageURL,
-                    "price": price,
-                    "url": urlLink
-                ])
+                formattedResults.append(Restuarant(
+                    id: id,
+                    name: name,
+                    latitude: restraurantLatitude,
+                    longitude: restaurantLongitude,
+                    addressArray: addressArray,
+                    distance: distance,
+                    phone: phone,
+                    previewImageURL: previewImageURL,
+                    rating: rating,
+                    ratingCount: ratingCount,
+                    url: urlLink,
+                    mainCategoryTitle: mainCategoryTitle,
+                    price: price)
+                )
             }
             completion(true, nil, formattedResults)
         }

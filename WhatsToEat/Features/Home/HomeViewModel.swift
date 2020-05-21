@@ -112,16 +112,8 @@ extension HomeViewModel {
                                      limit: limit,
                                      latitude: location.coordinate.latitude,
                                      longitude: location.coordinate.longitude) { (success, error, results) in
-            var names = [String]()
-                                        
-            guard let results = results else { return }
-            for r in results {
-                if let name = r["name"] {
-                    names.append(name)
-                }
-            }
-                                        
-            self.data = names
+                               
+            self.data = results.map { $0.name }
             self.updateMap(location: location)
         }
     }
