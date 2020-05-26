@@ -603,6 +603,7 @@ struct YelpAPIConstants {
         static let limit = "limit"
         static let offset = "offset"
         static let sort_by = "sort_by"
+        static let categories = "categories"
     }
     
     struct YelpParameterValues {
@@ -611,6 +612,7 @@ struct YelpAPIConstants {
         static let API_Key = "dSo_fC6R4hPg5QV3KoLxTjI-id-Euja6NF1Xq2Doz5QWvtIKEAbvIG1aVk5UnjKj3nHer0vTzFxoRZPL6Kfv_X_8N6fK25fU28N33ReGh4c7XZoVAsW4AHGf-iS2XnYx"
         static let restaurants = "restaurants"
         static let best_match = "best_match"
+        static let categories = "food, restaurants"
     }
     
     struct YelpResponseKeys {

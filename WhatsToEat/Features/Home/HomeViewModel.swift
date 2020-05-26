@@ -33,7 +33,7 @@ class HomeViewModel: NSObject {
     var delegate: HomeViewModelDelegate?
     
     // MARK: Data Source
-    private(set) var data = [String]() {
+    private(set) var restaurantData = [Restuarant]() {
         didSet { self.delegate?.didReceiveRestaurantsData() }
     }
     
@@ -57,6 +57,7 @@ class HomeViewModel: NSObject {
 }
 
 // MARK: - View Controller Input
+
 extension HomeViewModel {
     
     public func viewDidLoad() {
@@ -96,13 +97,13 @@ extension HomeViewModel {
                 self.currentSearchLocation = location
                 self.currentSearchLocationString = locationString
                 self.searchForRestaurants(keywords: keywordText,
-                                          limit: 10,
+                                          limit: 5,
                                           location: location)
             })
         } else {
             guard let location = currentSearchLocation else { return }
             searchForRestaurants(keywords: keywordText,
-                                 limit: 10,
+                                 limit: 5,
                                  location: location)
         }
     }
@@ -113,16 +114,50 @@ extension HomeViewModel {
                                      latitude: location.coordinate.latitude,
                                      longitude: location.coordinate.longitude) { (success, error, results) in
                                
-            self.data = results.map { $0.name }
-            self.updateMap(location: location)
+            self.restaurantData = results
+            guard let region = self.calculateNewRegion(from: results) else { return }
+            self.delegate?.didUpdateRegion(region: region)
         }
+    }
+    
+    private func calculateNewRegion(from restaurants: [Restuarant]) -> MKCoordinateRegion? {
+        
+        var minLatitude: Double?, maxLatitude: Double?, minLongitude: Double?, maxLongitude: Double?
+        
+        for restaurant in restaurants {
+            minLatitude = minLatitude == nil ? restaurant.latitude : min(restaurant.latitude, minLatitude!)
+            maxLatitude = maxLatitude == nil ? restaurant.latitude : max(restaurant.latitude, maxLatitude!)
+
+            minLongitude = minLongitude == nil ? restaurant.longitude : min(restaurant.longitude, minLongitude!)
+            maxLongitude = maxLongitude == nil ? restaurant.longitude : max(restaurant.longitude, maxLongitude!)
+        }
+        
+        guard
+            minLatitude != nil,
+            maxLatitude != nil,
+            minLongitude != nil,
+            maxLongitude != nil else {
+            if let currentLocation = currentSearchLocation {
+                 return MKCoordinateRegion(center: currentLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.1), longitudeDelta: CLLocationDegrees(0.1)))
+            } else {
+                return nil
+            }
+        }
+        
+        var region = MKCoordinateRegion()
+        region.center.latitude = (minLatitude! + maxLatitude!) / 2;
+        region.center.longitude = (minLongitude! + maxLongitude!) / 2;
+
+        region.span.latitudeDelta = (maxLatitude! - minLatitude!) * 1.5
+        region.span.longitudeDelta = (maxLongitude! - minLongitude!) * 1.5
+
+        return region
     }
 }
 
 // MARK: - CLLocationManagerDelegate
 
 extension HomeViewModel: CLLocationManagerDelegate {
-    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else { return }
         
@@ -141,7 +176,7 @@ extension HomeViewModel: CLLocationManagerDelegate {
             self.currentSearchLocationString = "\(city), \(state)"
         })
         
-        updateMap(location: location)
+        delegate?.didUpdateRegion(region: MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.1), longitudeDelta: CLLocationDegrees(0.1))))
         locationManager.stopUpdatingLocation()
     }
     
@@ -171,10 +206,5 @@ extension HomeViewModel: CLLocationManagerDelegate {
             ]
             completionHandlerForGeocode(true, nil, locationInfo)
         })
-    }
-    
-    func updateMap(location: CLLocation) {
-        let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.1), longitudeDelta: CLLocationDegrees(0.1)))
-        delegate?.didUpdateRegion(region: region)
     }
 }

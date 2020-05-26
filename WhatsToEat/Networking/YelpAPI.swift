@@ -53,7 +53,8 @@ class YelpAPI {
                           URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.term, value: keywords),
                           URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.limit, value: String(limit)),
                           URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.offset, value: String(pageOffset)),
-                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.sort_by, value: YelpAPIConstants.YelpParameterValues.best_match)
+                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.sort_by, value: YelpAPIConstants.YelpParameterValues.best_match),
+                          URLQueryItem(name: YelpAPIConstants.YelpResponseKeys.categories, value: YelpAPIConstants.YelpParameterValues.categories)
         ]
         
         var urlComponents = URLComponents(string: YelpAPIConstants.YelpParameterKeys.SearchURL)

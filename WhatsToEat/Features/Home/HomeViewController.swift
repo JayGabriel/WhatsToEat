@@ -21,7 +21,10 @@ class HomeViewController: UIViewController {
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.translatesAutoresizingMaskIntoConstraints = false
-        
+        mapView.showsUserLocation = true
+        mapView.showsCompass = true
+        mapView.delegate = self
+        mapView.tintColor = Constants.navigationBarColor
         return mapView
     }()
     
@@ -122,45 +125,13 @@ class HomeViewController: UIViewController {
         viewModel.refreshButtonTapped()
         animateTableView(shouldShow: resultsTableView.isHidden)
     }
-    
-    // MARK: - Table View
-    
-    private func updateResultsTableViewData() {
-        DispatchQueue.main.async {
-            self.resultsTableView.reloadData()
-        }
-    }
-    
-    private func animateTableView(shouldShow: Bool) {
-        if shouldShow {
-            resultsTableView.alpha = 0
-            resultsTableView.isHidden = false
-            UIView.animate(
-                withDuration: 0.5,
-                animations: {
-                    self.resultsTableView.alpha = 1
-                },
-                completion: { _ in
-                     self.resultsTableView.isHidden = false
-                }
-            )
-        } else {
-            UIView.animate(
-                withDuration: 0.5,
-                animations: {
-                    self.resultsTableView.alpha = 0
-                },
-                completion: { _ in
-                     self.resultsTableView.isHidden = true
-                }
-            )
-        }
-    }
 }
 
-extension HomeViewController: HomeViewModelDelegate {
+// MARK: - HomeViewModelDelegate
+extension HomeViewController: HomeViewModelDelegate {    
     func didReceiveRestaurantsData() {
         updateResultsTableViewData()
+        createMapAnnotations()
     }
     
     func didUpdateRegion(region: MKCoordinateRegion) {
@@ -178,6 +149,8 @@ extension HomeViewController: HomeViewModelDelegate {
     }
 }
 
+// MARK: - Search View Delegate
+
 extension HomeViewController: SearchViewDelegate {
     func didEnterSearch(keyword: String, location: String?) {
         updateResultsTableViewData()
@@ -185,15 +158,68 @@ extension HomeViewController: SearchViewDelegate {
     }
 }
 
+// MARK: - Map View Delegate
+
+extension HomeViewController: MKMapViewDelegate {
+    private func createMapAnnotations() {
+        let annotations = viewModel.restaurantData.map { restaurant -> MKAnnotation in
+            let annotation = MKPointAnnotation()
+            annotation.title = restaurant.name
+            annotation.subtitle = restaurant.mainCategoryTitle
+            annotation.coordinate = CLLocationCoordinate2D(latitude: restaurant.latitude, longitude: restaurant.longitude)
+            return annotation
+        }
+        
+        DispatchQueue.main.async {
+            self.mapView.removeAnnotations(self.mapView.annotations)
+            self.mapView.showAnnotations(annotations, animated: true)
+        }
+    }
+}
+
+// MARK: - Table View Delegate and Data Source
+
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.data.count
+        return viewModel.restaurantData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = viewModel.data[indexPath.row]
+        cell.textLabel?.text = viewModel.restaurantData[indexPath.row].name
         return cell
+    }
+    
+    private func updateResultsTableViewData() {
+           DispatchQueue.main.async {
+               self.resultsTableView.reloadData()
+           }
+       }
+       
+   private func animateTableView(shouldShow: Bool) {
+       if shouldShow {
+           resultsTableView.alpha = 0
+           resultsTableView.isHidden = false
+           UIView.animate(
+               withDuration: 0.5,
+               animations: {
+                   self.resultsTableView.alpha = 1
+               },
+               completion: { _ in
+                    self.resultsTableView.isHidden = false
+               }
+           )
+       } else {
+           UIView.animate(
+               withDuration: 0.5,
+               animations: {
+                   self.resultsTableView.alpha = 0
+               },
+               completion: { _ in
+                    self.resultsTableView.isHidden = true
+               }
+           )
+       }
     }
 }
 
