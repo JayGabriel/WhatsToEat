@@ -37,6 +37,12 @@ class HomeViewModel: NSObject {
         didSet { self.delegate?.didReceiveRestaurantsData() }
     }
     
+    var restaurantTableCellViewModels: [RestaurantListTableViewCellViewModel] {
+        return restaurantData.map {
+            RestaurantListTableViewCellViewModel(name: $0.name, kind: $0.mainCategoryTitle, imageData: $0.previewImageURL)
+        }
+    }
+    
     private(set) var currentSearchKeywordsString: String? = nil {
         didSet { self.delegate?.didChangeCurrentKeywordsString() }
     }
@@ -83,6 +89,8 @@ extension HomeViewModel {
     public func searchButtonTapped(keywordText: String, locationText: String?) {
         self.currentSearchKeywordsString = keywordText
         self.currentSearchLocationString = locationText
+        
+        restaurantData.removeAll()        
         
         if let locationText = locationText {
             geocodeLocationString(cityToGeocode: locationText, completionHandlerForGeocode: {

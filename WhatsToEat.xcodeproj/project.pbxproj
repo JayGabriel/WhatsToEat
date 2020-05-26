@@ -21,6 +21,9 @@
 		69063DFD24665DD400136732 /* YelpAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DFC24665DD400136732 /* YelpAPIConstants.swift */; };
 		699E5411247724960065D761 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699E5410247724960065D761 /* UIView+Extensions.swift */; };
 		699E5413247725310065D761 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699E5412247725310065D761 /* Restaurant.swift */; };
+		699E5415247CACC60065D761 /* RestaurantListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699E5414247CACC60065D761 /* RestaurantListTableViewCell.swift */; };
+		69D4BAAA247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D4BAA9247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift */; };
+		845B403424874C7300FA1E3D /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B403324874C7300FA1E3D /* UIImage+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +64,9 @@
 		69063DFC24665DD400136732 /* YelpAPIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpAPIConstants.swift; sourceTree = "<group>"; };
 		699E5410247724960065D761 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		699E5412247725310065D761 /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
+		699E5414247CACC60065D761 /* RestaurantListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantListTableViewCell.swift; sourceTree = "<group>"; };
+		69D4BAA9247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantListTableViewCellViewModel.swift; sourceTree = "<group>"; };
+		845B403324874C7300FA1E3D /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				699E5410247724960065D761 /* UIView+Extensions.swift */,
+				845B403324874C7300FA1E3D /* UIImage+Extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -167,6 +174,7 @@
 				69063DBF24636A5A00136732 /* HomeViewController.swift */,
 				69063DF52463782500136732 /* HomeViewModel.swift */,
 				69063DF72464D24E00136732 /* SearchView.swift */,
+				699E5416247CACCC0065D761 /* TableViewCells */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -200,6 +208,15 @@
 				69063DFC24665DD400136732 /* YelpAPIConstants.swift */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		699E5416247CACCC0065D761 /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				699E5414247CACC60065D761 /* RestaurantListTableViewCell.swift */,
+				69D4BAA9247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift */,
+			);
+			path = TableViewCells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -337,9 +354,12 @@
 				69063DBC24636A5A00136732 /* AppDelegate.swift in Sources */,
 				69063DFD24665DD400136732 /* YelpAPIConstants.swift in Sources */,
 				699E5411247724960065D761 /* UIView+Extensions.swift in Sources */,
+				69D4BAAA247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift in Sources */,
 				69063DBE24636A5A00136732 /* SceneDelegate.swift in Sources */,
+				699E5415247CACC60065D761 /* RestaurantListTableViewCell.swift in Sources */,
 				69063DFB24665D2400136732 /* YelpAPI.swift in Sources */,
 				69063DF62463782500136732 /* HomeViewModel.swift in Sources */,
+				845B403424874C7300FA1E3D /* UIImage+Extensions.swift in Sources */,
 				69063DF82464D24E00136732 /* SearchView.swift in Sources */,
 				69063DC624636A5A00136732 /* WhatsToEat.xcdatamodeld in Sources */,
 			);
