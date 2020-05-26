@@ -17,7 +17,12 @@ class SearchView: UIView {
     private enum Constants {
         static let expandedHeight: CGFloat = 100
         static let compactHeight: CGFloat = 50
-        static let backgroundColor = UIColor(red: 207/255, green: 78/255, blue: 222/255, alpha: 1)
+        static let backgroundColor: UIColor = UIColor(red: 207/255, green: 78/255, blue: 222/255, alpha: 1)
+        
+        static let shadowColor: CGColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5).cgColor
+        static let shadowOffset: CGSize = CGSize(width: 0.0, height: 5.0)
+        static let shadowOpacity: Float = 0.5
+        static let shadowRadius: CGFloat = 10.0
     }
     
     // MARK: - Properties
@@ -50,10 +55,10 @@ class SearchView: UIView {
         button.addTarget(self, action: #selector(expand), for: .touchUpInside)
         button.setTitleColor(.white, for: .normal)
         button.setTitle("Find something to eat...", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         return button
     }()
-    
+        
     private let textFieldStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +76,9 @@ class SearchView: UIView {
         textField.keyboardType = .alphabet
         textField.autocorrectionType = .no
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Type (e.g. \"Ramen\" or \"Burgers\")"
+        textField.placeholder = "What kind of food?"
+        textField.font = UIFont.systemFont(ofSize: 22, weight: .heavy)
+        textField.textAlignment = .center
         textField.textColor = .white
         textField.backgroundColor = Constants.backgroundColor
         textField.delegate = self
@@ -84,7 +91,9 @@ class SearchView: UIView {
         textField.keyboardType = .alphabet
         textField.autocorrectionType = .no
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Location"
+        textField.placeholder = "Where to search?"
+        textField.font = UIFont.systemFont(ofSize: 21, weight: .light)
+        textField.textAlignment = .center
         textField.textColor = .white
         textField.backgroundColor = Constants.backgroundColor
         textField.delegate = self
@@ -116,6 +125,11 @@ class SearchView: UIView {
         addSubview(textFieldStackView)
         textFieldStackView.addArrangedSubview(keywordTextField)
         textFieldStackView.addArrangedSubview(locationTextField)
+        
+        addShadow(color: Constants.shadowColor,
+                  offset: Constants.shadowOffset,
+                  opacity: Constants.shadowOpacity,
+                  radius: Constants.shadowRadius)
     }
         
     private func setupConstraints() {
@@ -208,5 +222,18 @@ extension SearchView: UITextFieldDelegate {
         }
         
         return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text != nil {
+            previousSearchValue = textField.text
+            textField.text?.removeAll()
+        }
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField.text == nil || textField.text!.isEmpty {
+            textField.text = previousSearchValue
+        }
     }
 }

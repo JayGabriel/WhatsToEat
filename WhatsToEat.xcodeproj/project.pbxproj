@@ -19,6 +19,8 @@
 		69063DF82464D24E00136732 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DF72464D24E00136732 /* SearchView.swift */; };
 		69063DFB24665D2400136732 /* YelpAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DFA24665D2400136732 /* YelpAPI.swift */; };
 		69063DFD24665DD400136732 /* YelpAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DFC24665DD400136732 /* YelpAPIConstants.swift */; };
+		699E5411247724960065D761 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699E5410247724960065D761 /* UIView+Extensions.swift */; };
+		699E5413247725310065D761 /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699E5412247725310065D761 /* Restaurant.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 		69063DF72464D24E00136732 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		69063DFA24665D2400136732 /* YelpAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpAPI.swift; sourceTree = "<group>"; };
 		69063DFC24665DD400136732 /* YelpAPIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpAPIConstants.swift; sourceTree = "<group>"; };
+		699E5410247724960065D761 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		699E5412247725310065D761 /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +156,7 @@
 		69063DF024636E2100136732 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				699E5410247724960065D761 /* UIView+Extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -183,6 +188,7 @@
 		69063DF424636EC400136732 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				699E5412247725310065D761 /* Restaurant.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -326,9 +332,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				699E5413247725310065D761 /* Restaurant.swift in Sources */,
 				69063DC024636A5A00136732 /* HomeViewController.swift in Sources */,
 				69063DBC24636A5A00136732 /* AppDelegate.swift in Sources */,
 				69063DFD24665DD400136732 /* YelpAPIConstants.swift in Sources */,
+				699E5411247724960065D761 /* UIView+Extensions.swift in Sources */,
 				69063DBE24636A5A00136732 /* SceneDelegate.swift in Sources */,
 				69063DFB24665D2400136732 /* YelpAPI.swift in Sources */,
 				69063DF62463782500136732 /* HomeViewModel.swift in Sources */,
