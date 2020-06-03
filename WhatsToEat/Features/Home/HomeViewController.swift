@@ -49,12 +49,13 @@ class HomeViewController: UIViewController {
     
     private lazy var resultsTableView: UITableView = {
         let tableview = UITableView()
-        tableview.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableview.register(RestaurantListTableViewCell.self, forCellReuseIdentifier: RestaurantListTableViewCell.reuseIdentifier)
         tableview.translatesAutoresizingMaskIntoConstraints = false
         tableview.isHidden = true
         tableview.backgroundColor = .white
         tableview.delegate = self
         tableview.dataSource = self
+        tableview.separatorStyle = .none
         return tableview
     }()
         
@@ -180,23 +181,48 @@ extension HomeViewController: MKMapViewDelegate {
 // MARK: - Table View Delegate and Data Source
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         return viewModel.restaurantData.count
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = viewModel.restaurantData[indexPath.row].name
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: RestaurantListTableViewCell.reuseIdentifier, for: indexPath) as? RestaurantListTableViewCell else {
+            fatalError("Failed to dequeue a RestaurantListTableViewCell")
+        }
+        cell.configure(with: viewModel.restaurantTableCellViewModels[indexPath.section])
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return (tableView.frame.height / 5) - 20
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = UIView()
+        header.backgroundColor = UIColor.clear
+        return header
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return CGFloat(15)
+    }
+        
     private func updateResultsTableViewData() {
-           DispatchQueue.main.async {
-               self.resultsTableView.reloadData()
-           }
-       }
+        DispatchQueue.main.async {
+            self.resultsTableView.reloadData()
+        }
+    }
        
-   private func animateTableView(shouldShow: Bool) {
+    private func animateTableView(shouldShow: Bool) {
        if shouldShow {
            resultsTableView.alpha = 0
            resultsTableView.isHidden = false
