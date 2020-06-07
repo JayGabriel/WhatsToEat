@@ -12,6 +12,13 @@ import MapKit
 class HomeViewController: UIViewController {
     private enum Constants {
         static let navigationBarColor = UIColor(red: 207/255, green: 78/255, blue: 222/255, alpha: 1)
+        
+        static let resultsTableViewBottomOffset: CGFloat = -10.0
+
+        static let toolbarViewHeight: CGFloat = 60.0
+        static let toolbarViewLeftAnchor: CGFloat = 45.0
+        static let toolbarViewRightAnchor: CGFloat = -45.0
+        static let toolbarBottomAnchorOffset: CGFloat = -20.0
     }
 
     // MARK: - Properties
@@ -28,16 +35,18 @@ class HomeViewController: UIViewController {
         return mapView
     }()
     
+    private lazy var blurView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.isHidden = true
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        return blurView
+    }()
+    
     private lazy var settingsButton: UIBarButtonItem = {
        let barButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(settingsButtonTapped))
        barButton.tintColor = .white
        return barButton
-    }()
-    
-    private lazy var refreshButton: UIBarButtonItem = {
-        let barButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshButtonTapped))
-        barButton.tintColor = .white
-        return barButton
     }()
         
     private lazy var searchView: SearchView = {
@@ -47,12 +56,19 @@ class HomeViewController: UIViewController {
         return searchView
     }()
     
+    private lazy var toolbarView: ToolbarView = {
+        let toolbarView = ToolbarView()
+        toolbarView.translatesAutoresizingMaskIntoConstraints = false
+        toolbarView.delegate = self
+        return toolbarView
+    }()
+    
     private lazy var resultsTableView: UITableView = {
         let tableview = UITableView()
         tableview.register(RestaurantListTableViewCell.self, forCellReuseIdentifier: RestaurantListTableViewCell.reuseIdentifier)
         tableview.translatesAutoresizingMaskIntoConstraints = false
         tableview.isHidden = true
-        tableview.backgroundColor = .white
+        tableview.backgroundColor = .clear
         tableview.delegate = self
         tableview.dataSource = self
         tableview.separatorStyle = .none
@@ -91,11 +107,12 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.barTintColor = Constants.navigationBarColor
         navigationController?.navigationBar.isTranslucent = false
         navigationItem.leftBarButtonItem = settingsButton
-        navigationItem.rightBarButtonItem = refreshButton
         
         view.addSubview(mapView)
+        view.addSubview(blurView)
         view.addSubview(resultsTableView)
         view.addSubview(searchView)
+        view.addSubview(toolbarView)
     }
     
     private func setupConstraints() {
@@ -105,6 +122,11 @@ class HomeViewController: UIViewController {
             mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
+            blurView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            blurView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            blurView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            blurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             searchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchView.leftAnchor.constraint(equalTo: view.leftAnchor),
             searchView.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -112,7 +134,12 @@ class HomeViewController: UIViewController {
             resultsTableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             resultsTableView.rightAnchor.constraint(equalTo: view.rightAnchor),
             resultsTableView.topAnchor.constraint(equalTo: searchView.bottomAnchor),
-            resultsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            resultsTableView.bottomAnchor.constraint(equalTo: toolbarView.topAnchor, constant: Constants.resultsTableViewBottomOffset),
+            
+            toolbarView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.toolbarViewLeftAnchor),
+            toolbarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: Constants.toolbarViewRightAnchor),
+            toolbarView.bottomAnchor.constraint(equalTo: UIDevice().hasBottomSafeAreaInset ?  view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor, constant: Constants.toolbarBottomAnchorOffset),
+            toolbarView.heightAnchor.constraint(equalToConstant: Constants.toolbarViewHeight)
         ])
     }
     
@@ -120,11 +147,6 @@ class HomeViewController: UIViewController {
     
     @objc private func settingsButtonTapped() {
         viewModel.settingsButtonTapped()
-    }
-    
-    @objc private func refreshButtonTapped() {
-        viewModel.refreshButtonTapped()
-        animateTableView(shouldShow: resultsTableView.isHidden)
     }
 }
 
@@ -150,7 +172,7 @@ extension HomeViewController: HomeViewModelDelegate {
     }
 }
 
-// MARK: - Search View Delegate
+// MARK: - SearchView Delegate
 
 extension HomeViewController: SearchViewDelegate {
     func didEnterSearch(keyword: String, location: String?) {
@@ -159,7 +181,27 @@ extension HomeViewController: SearchViewDelegate {
     }
 }
 
-// MARK: - Map View Delegate
+// MARK: - ToolbarView Delegate
+
+extension HomeViewController: ToolbarViewDelegate {
+    func didTapListButton() {
+        animateTableView(shouldShow: true)
+    }
+    
+    func didTapMapButton() {
+        animateTableView(shouldShow: false)
+    }
+    
+    func didTapRandomButton() {
+        // TODO: Add randomized search
+    }
+    
+    func didTapRefreshButton() {
+        viewModel.refreshButtonTapped()
+    }
+}
+
+// MARK: - MapView Delegate
 
 extension HomeViewController: MKMapViewDelegate {
     private func createMapAnnotations() {
@@ -178,7 +220,7 @@ extension HomeViewController: MKMapViewDelegate {
     }
 }
 
-// MARK: - Table View Delegate and Data Source
+// MARK: - TableView Delegate and Data Source
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -223,29 +265,35 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
        
     private func animateTableView(shouldShow: Bool) {
-       if shouldShow {
-           resultsTableView.alpha = 0
-           resultsTableView.isHidden = false
-           UIView.animate(
-               withDuration: 0.5,
-               animations: {
-                   self.resultsTableView.alpha = 1
-               },
-               completion: { _ in
+        if shouldShow {
+            resultsTableView.alpha = 0
+            resultsTableView.isHidden = false
+            blurView.alpha = 0
+            blurView.isHidden = false
+            UIView.animate(
+                withDuration: 0.5,
+                animations: {
+                    self.resultsTableView.alpha = 1
+                    self.blurView.alpha = 1
+            },
+                completion: { _ in
                     self.resultsTableView.isHidden = false
-               }
-           )
-       } else {
-           UIView.animate(
-               withDuration: 0.5,
-               animations: {
-                   self.resultsTableView.alpha = 0
-               },
-               completion: { _ in
+                    self.blurView.isHidden = false
+            }
+            )
+        } else {
+            UIView.animate(
+                withDuration: 0.5,
+                animations: {
+                    self.resultsTableView.alpha = 0
+                    self.blurView.alpha = 0
+            },
+                completion: { _ in
                     self.resultsTableView.isHidden = true
-               }
-           )
-       }
+                    self.blurView.isHidden = true
+            }
+            )
+        }
     }
 }
 

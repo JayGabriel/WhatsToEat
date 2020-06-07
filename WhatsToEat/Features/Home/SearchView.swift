@@ -169,10 +169,10 @@ class SearchView: UIView {
                     self.superview?.layoutIfNeeded()
                     self.compactTextButton.alpha = 0
                     self.textFieldStackView.alpha = 1
+                    self.keywordTextField.becomeFirstResponder()
                 },
                 completion: { _ in
                     self.compactTextButton.isHidden = true
-                    self.keywordTextField.becomeFirstResponder()
                 }
             )
         }
@@ -206,6 +206,14 @@ class SearchView: UIView {
             )
         }
     }
+    
+    func toggleEditing() {
+        if isEditing {
+            contract()
+        } else {
+            expand()
+        }
+    }
 }
 
 extension SearchView: UITextFieldDelegate {
@@ -216,6 +224,12 @@ extension SearchView: UITextFieldDelegate {
                 !keywordText.isEmpty else {
                     return false
             }
+            
+            if textField === keywordTextField && (locationTextField.text?.isEmpty ?? true) {
+                locationTextField.becomeFirstResponder()
+                return false
+            }
+            
             self.contract()
             self.updateCompactTitle()
             self.delegate?.didEnterSearch(keyword: keywordText, location: locationTextField.text)
@@ -228,12 +242,6 @@ extension SearchView: UITextFieldDelegate {
         if textField.text != nil {
             previousSearchValue = textField.text
             textField.text?.removeAll()
-        }
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField.text == nil || textField.text!.isEmpty {
-            textField.text = previousSearchValue
         }
     }
 }
