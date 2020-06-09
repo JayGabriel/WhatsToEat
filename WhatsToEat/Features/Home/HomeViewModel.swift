@@ -83,7 +83,13 @@ extension HomeViewModel {
     }
     
     public func refreshButtonTapped() {
-        
+        guard
+            let keywordText = self.currentSearchKeywordsString,
+            let locationText = self.currentSearchLocationString else {
+                return
+        }
+
+        searchButtonTapped(keywordText: keywordText, locationText: locationText)
     }
     
     public func searchButtonTapped(keywordText: String, locationText: String?) {

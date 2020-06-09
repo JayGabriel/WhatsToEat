@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		589B4318248F31A500831A28 /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589B4317248F31A500831A28 /* UIDevice+Extensions.swift */; };
 		69063DBC24636A5A00136732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DBB24636A5A00136732 /* AppDelegate.swift */; };
 		69063DBE24636A5A00136732 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DBD24636A5A00136732 /* SceneDelegate.swift */; };
 		69063DC024636A5A00136732 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69063DBF24636A5A00136732 /* HomeViewController.swift */; };
@@ -24,6 +25,8 @@
 		699E5415247CACC60065D761 /* RestaurantListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699E5414247CACC60065D761 /* RestaurantListTableViewCell.swift */; };
 		69D4BAAA247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D4BAA9247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift */; };
 		845B403424874C7300FA1E3D /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B403324874C7300FA1E3D /* UIImage+Extensions.swift */; };
+		845B4036248848EC00FA1E3D /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845B4035248848EC00FA1E3D /* ToolbarView.swift */; };
+		845FCFE5248859A100978BE1 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845FCFE4248859A100978BE1 /* Images.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		589B4317248F31A500831A28 /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		69063DB824636A5A00136732 /* WhatsToEat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhatsToEat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69063DBB24636A5A00136732 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69063DBD24636A5A00136732 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +71,8 @@
 		699E5414247CACC60065D761 /* RestaurantListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantListTableViewCell.swift; sourceTree = "<group>"; };
 		69D4BAA9247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantListTableViewCellViewModel.swift; sourceTree = "<group>"; };
 		845B403324874C7300FA1E3D /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
+		845B4035248848EC00FA1E3D /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		845FCFE4248859A100978BE1 /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +170,8 @@
 			children = (
 				699E5410247724960065D761 /* UIView+Extensions.swift */,
 				845B403324874C7300FA1E3D /* UIImage+Extensions.swift */,
+				589B4317248F31A500831A28 /* UIDevice+Extensions.swift */,
+				845FCFE4248859A100978BE1 /* Images.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -174,6 +182,7 @@
 				69063DBF24636A5A00136732 /* HomeViewController.swift */,
 				69063DF52463782500136732 /* HomeViewModel.swift */,
 				69063DF72464D24E00136732 /* SearchView.swift */,
+				845B4035248848EC00FA1E3D /* ToolbarView.swift */,
 				699E5416247CACCC0065D761 /* TableViewCells */,
 			);
 			path = Home;
@@ -355,11 +364,14 @@
 				69063DFD24665DD400136732 /* YelpAPIConstants.swift in Sources */,
 				699E5411247724960065D761 /* UIView+Extensions.swift in Sources */,
 				69D4BAAA247CADF0004D5800 /* RestaurantListTableViewCellViewModel.swift in Sources */,
+				845B4036248848EC00FA1E3D /* ToolbarView.swift in Sources */,
+				845FCFE5248859A100978BE1 /* Images.swift in Sources */,
 				69063DBE24636A5A00136732 /* SceneDelegate.swift in Sources */,
 				699E5415247CACC60065D761 /* RestaurantListTableViewCell.swift in Sources */,
 				69063DFB24665D2400136732 /* YelpAPI.swift in Sources */,
 				69063DF62463782500136732 /* HomeViewModel.swift in Sources */,
 				845B403424874C7300FA1E3D /* UIImage+Extensions.swift in Sources */,
+				589B4318248F31A500831A28 /* UIDevice+Extensions.swift in Sources */,
 				69063DF82464D24E00136732 /* SearchView.swift in Sources */,
 				69063DC624636A5A00136732 /* WhatsToEat.xcdatamodeld in Sources */,
 			);
