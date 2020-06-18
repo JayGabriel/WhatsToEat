@@ -183,14 +183,14 @@ class SearchView: UIView {
     func contract() {
         isExpanded = false
 
-        keywordTextField.resignFirstResponder()
-        locationTextField.resignFirstResponder()
-        
-        heightConstraint?.constant = Constants.compactHeight
-        compactTextButton.isHidden = false
-        compactTextButton.alpha = 0
-
         DispatchQueue.main.async {
+            self.keywordTextField.resignFirstResponder()
+            self.locationTextField.resignFirstResponder()
+            
+            self.heightConstraint?.constant = Constants.compactHeight
+            self.compactTextButton.isHidden = false
+            self.compactTextButton.alpha = 0
+
             UIView.animate(
                 withDuration: 0.2,
                 delay: 0.0,

@@ -155,6 +155,7 @@ extension HomeViewController: HomeViewModelDelegate {
     func didReceiveRestaurantsData() {
         updateResultsTableViewData()
         createMapAnnotations()
+        searchView.contract()
     }
     
     func didUpdateRegion(region: MKCoordinateRegion) {
@@ -193,7 +194,7 @@ extension HomeViewController: ToolbarViewDelegate {
     }
     
     func didTapRandomButton() {
-        // TODO: Add randomized search
+        viewModel.randomButtonTapped()
     }
     
     func didTapRefreshButton() {

@@ -82,6 +82,33 @@ extension HomeViewModel {
         
     }
     
+    public func randomButtonTapped() {
+        guard let locationText = self.currentSearchLocationString else {
+            return
+        }
+        
+        geocodeLocationString(cityToGeocode: locationText) { success, error, result in
+            guard
+                let locationDictionary = result,
+                let locationString = locationDictionary["locationString"] as? String,
+                let location = locationDictionary["location"] as? CLLocation,
+                let countryCode = locationDictionary["countryCode"] as? String,
+                let keywordText = YelpAPIConstants.CountryStyles.AllStyles.filter({$0.2.contains(countryCode)}).randomElement()?.1 else {
+                    print("fail")
+                    return
+            }
+                        
+            self.currentSearchKeywordsString = keywordText
+            self.currentSearchLocation = location
+            self.currentSearchLocationString = locationString
+            
+            self.searchForRestaurants(keywords: keywordText,
+                                      limit: 5,
+                                      location: location)
+        }
+    }
+
+    
     public func refreshButtonTapped() {
         guard
             let keywordText = self.currentSearchKeywordsString,
@@ -209,14 +236,16 @@ extension HomeViewModel: CLLocationManagerDelegate {
                 let firstPlacemark = foundPlacemarks.first,
                 let city = firstPlacemark.locality,
                 let state = firstPlacemark.administrativeArea,
-                let location = firstPlacemark.location
+                let location = firstPlacemark.location,
+                let countryCode = firstPlacemark.isoCountryCode
             else {
                 return
             }
         
             let locationInfo: [String: Any] = [
                 "locationString": "\(city), \(state)",
-                "location": location
+                "location": location,
+                "countryCode": countryCode
             ]
             completionHandlerForGeocode(true, nil, locationInfo)
         })
