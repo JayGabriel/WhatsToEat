@@ -16,6 +16,7 @@ protocol HomeViewModelDelegate {
     func didUpdateRegion(region: MKCoordinateRegion)
     func didChangeCurrentKeywordsString()
     func didChangeCurrentLocationString()
+    func shouldDisplayRestaurantDetail(viewModel: RestaurantDetailViewModel)
 }
 
 class HomeViewModel: NSObject {
@@ -117,6 +118,15 @@ extension HomeViewModel {
         }
 
         searchButtonTapped(keywordText: keywordText, locationText: locationText)
+    }
+    
+    public func didSelectRow(at indexPath: IndexPath) {
+        guard indexPath.section < restaurantData.count else {
+            return
+        }
+        
+        let selectedRestaurant = restaurantData[indexPath.section]
+        delegate?.shouldDisplayRestaurantDetail(viewModel: RestaurantDetailViewModel(restaurant: selectedRestaurant))
     }
     
     public func searchButtonTapped(keywordText: String, locationText: String?) {

@@ -36,7 +36,7 @@ class ToolbarView: UIView {
     private lazy var toggleViewButton: UIButton = {
         let toggleViewButton = UIButton(type: .system)
         toggleViewButton.translatesAutoresizingMaskIntoConstraints = false
-        toggleViewButton.setImage(Images.listIcon, for: .normal)
+        toggleViewButton.setImage(.listIcon, for: .normal)
         toggleViewButton.backgroundColor = Constants.buttonColor
         toggleViewButton.tintColor = .white
         toggleViewButton.addTarget(self, action: #selector(didTapToggleViewButton), for: .touchUpInside)
@@ -46,7 +46,7 @@ class ToolbarView: UIView {
     private lazy var randomButton: UIButton = {
         let searchButton = UIButton(type: .system)
         searchButton.translatesAutoresizingMaskIntoConstraints = false
-        searchButton.setImage(Images.randomIcon, for: .normal)
+        searchButton.setImage(.randomIcon, for: .normal)
         searchButton.tintColor = .white
         searchButton.backgroundColor = Constants.buttonColor
         searchButton.addTarget(self, action: #selector(didTapRandomButton), for: .touchUpInside)
@@ -56,7 +56,7 @@ class ToolbarView: UIView {
     private lazy var refreshButton: UIButton = {
         let refreshButton = UIButton(type: .system)
         refreshButton.translatesAutoresizingMaskIntoConstraints = false
-        refreshButton.setImage(Images.refreshIcon, for: .normal)
+        refreshButton.setImage(.refreshIcon, for: .normal)
         refreshButton.backgroundColor = Constants.buttonColor
         refreshButton.tintColor = .white
         refreshButton.addTarget(self, action: #selector(didTapRefreshButton), for: .touchUpInside)
@@ -183,11 +183,11 @@ class ToolbarView: UIView {
     
     @objc private func didTapToggleViewButton() {
         if showsMapIcon {
-            toggleViewButton.setImage(Images.listIcon, for: .normal)
+            toggleViewButton.setImage(.listIcon, for: .normal)
             delegate?.didTapMapButton()
             showsMapIcon = false
         } else {
-            toggleViewButton.setImage(Images.mapIcon, for: .normal)
+            toggleViewButton.setImage(.mapIcon, for: .normal)
             delegate?.didTapListButton()
             showsMapIcon = true
         }

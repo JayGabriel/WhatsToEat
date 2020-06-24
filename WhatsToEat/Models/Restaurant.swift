@@ -18,7 +18,7 @@ struct Restuarant {
     let phone: String
     let previewImageURL: String
     let rating: Double
-    let ratingCount: Int
+    let reviewCount: Int
     let url: String
     let mainCategoryTitle: String
     let price: String
