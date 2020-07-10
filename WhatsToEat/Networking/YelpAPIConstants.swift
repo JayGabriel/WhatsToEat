@@ -638,6 +638,7 @@ struct YelpAPIConstants {
         static let photos = "photos"
         static let hours = "hours"
         static let open = "open"
+        static let isOpenNow = "is_open_now"
         static let day = "day"
         static let start = "start"
         static let end = "end"

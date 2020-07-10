@@ -11,7 +11,7 @@ import MapKit
 
 class HomeViewController: UIViewController {
     private enum Constants {
-        static let navigationBarColor = UIColor(red: 207/255, green: 78/255, blue: 222/255, alpha: 1)
+        static let navigationBarColor: UIColor = .WhatsToEatPrimary
         
         static let resultsTableViewBottomOffset: CGFloat = -10.0
 
@@ -43,12 +43,6 @@ class HomeViewController: UIViewController {
         return blurView
     }()
     
-    private lazy var settingsButton: UIBarButtonItem = {
-       let barButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(settingsButtonTapped))
-       barButton.tintColor = .white
-       return barButton
-    }()
-        
     private lazy var searchView: SearchView = {
         let searchView = SearchView()
         searchView.translatesAutoresizingMaskIntoConstraints = false
@@ -98,6 +92,8 @@ class HomeViewController: UIViewController {
         viewModel.viewDidLoad()
     }
     
+
+    
     // MARK: - Layout
     
     private func setupView() {
@@ -106,7 +102,6 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes =  [NSAttributedString.Key.foregroundColor : UIColor.white]
         navigationController?.navigationBar.barTintColor = Constants.navigationBarColor
         navigationController?.navigationBar.isTranslucent = false
-        navigationItem.leftBarButtonItem = settingsButton
         
         view.addSubview(mapView)
         view.addSubview(blurView)
@@ -142,12 +137,6 @@ class HomeViewController: UIViewController {
             toolbarView.heightAnchor.constraint(equalToConstant: Constants.toolbarViewHeight)
         ])
     }
-    
-    // MARK: - Actions
-    
-    @objc private func settingsButtonTapped() {
-        viewModel.settingsButtonTapped()
-    }
 }
 
 // MARK: - HomeViewModelDelegate
@@ -170,6 +159,11 @@ extension HomeViewController: HomeViewModelDelegate {
     
     func didChangeCurrentLocationString() {
         searchView.locationText = viewModel.currentSearchLocationString ?? ""
+    }
+    
+    func shouldDisplayRestaurantDetail(viewModel: RestaurantDetailViewModel) {
+        let restaurantDetailViewController = RestaurantDetailViewController(viewModel: viewModel)
+        present(restaurantDetailViewController, animated: true, completion: nil)
     }
 }
 
@@ -207,9 +201,7 @@ extension HomeViewController: ToolbarViewDelegate {
 extension HomeViewController: MKMapViewDelegate {
     private func createMapAnnotations() {
         let annotations = viewModel.restaurantData.map { restaurant -> MKAnnotation in
-            let annotation = MKPointAnnotation()
-            annotation.title = restaurant.name
-            annotation.subtitle = restaurant.mainCategoryTitle
+            let annotation = MKRestaurantAnnotation(restaurant: restaurant)
             annotation.coordinate = CLLocationCoordinate2D(latitude: restaurant.latitude, longitude: restaurant.longitude)
             return annotation
         }
@@ -217,6 +209,15 @@ extension HomeViewController: MKMapViewDelegate {
         DispatchQueue.main.async {
             self.mapView.removeAnnotations(self.mapView.annotations)
             self.mapView.showAnnotations(annotations, animated: true)
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        if let restaurantAnnotation = view.annotation as? MKRestaurantAnnotation {
+            let viewModel = RestaurantDetailViewModel(restaurant: restaurantAnnotation.restaurant)
+            let viewController = RestaurantDetailViewController(viewModel: viewModel)
+            present(viewController, animated: true, completion: nil)
+            mapView.deselectAnnotation(restaurantAnnotation, animated: true)
         }
     }
 }
@@ -242,6 +243,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

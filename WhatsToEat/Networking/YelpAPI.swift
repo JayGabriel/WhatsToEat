@@ -130,7 +130,6 @@ class YelpAPI {
                     price = ""
                 }
                 
-                // The extracted information is stored in a dictionary and is passed back to the calling controller.
                 formattedResults.append(Restuarant(
                     id: id,
                     name: name,
@@ -141,13 +140,81 @@ class YelpAPI {
                     phone: phone,
                     previewImageURL: previewImageURL,
                     rating: rating,
-                    ratingCount: ratingCount,
+                    reviewCount: ratingCount,
                     url: urlLink,
                     mainCategoryTitle: mainCategoryTitle,
                     price: price)
                 )
             }
             completion(true, nil, formattedResults)
+        }
+        task.resume()
+    }
+    
+    // MARK: Detail
+    
+    func getDetailedRestaurantData(restaurantID: String,
+                                   _ completion: @escaping (_ success: Bool, _ error: Error?, _ restaurantDetail: RestaurantDetail?) -> Void) {
+        guard let escapedID = restaurantID.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            completion(false, nil, nil)
+            return
+        }
+        
+        let path = "\(YelpAPIConstants.YelpParameterKeys.BusinessesURL)/\(escapedID)"
+        
+        guard let url = URL(string: path) else {
+            completion(false, nil, nil)
+            return
+        }
+        
+        let request = NSMutableURLRequest(url: url)
+        request.httpMethod = YelpAPIConstants.YelpParameterKeys.Get
+        request.addValue("\(YelpAPIConstants.YelpParameterKeys.Bearer) \(YelpAPIConstants.YelpParameterValues.API_Key)", forHTTPHeaderField: YelpAPIConstants.YelpParameterKeys.Authorization)
+        
+        let session = URLSession.shared
+        let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
+            guard let data = data else {
+                completion(false, nil, nil)
+                return
+            }
+            
+            var parsedResult: [String: AnyObject]
+            do {
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: AnyObject]
+            } catch {
+                completion(false, nil, nil)
+                return
+            }
+                        
+            let imageURLs = parsedResult[YelpAPIConstants.YelpResponseKeys.photos] as? [String]
+            var isOpen: Int?
+            
+            var businessHours = [BusinessHours]()
+            
+            if
+                let hours = parsedResult[YelpAPIConstants.YelpResponseKeys.hours] as? [[String: AnyObject]],
+                let hoursDictionary = hours.first {
+                
+                isOpen = hoursDictionary[YelpAPIConstants.YelpResponseKeys.isOpenNow] as? Int
+                
+                if let schedules = hoursDictionary[YelpAPIConstants.YelpResponseKeys.open] as? [[String: Any]]{
+                    for schedule in schedules {
+                        if
+                            let day = schedule["day"] as? Int,
+                            let start = schedule["start"] as? String,
+                            let end = schedule["end"] as? String,
+                            let formattedStart = start.from24HourTo12Hour(),
+                            let formattedEnd = end.from24HourTo12Hour() {
+                            
+                            businessHours.append(BusinessHours(day: day, open: formattedStart, closed: formattedEnd))
+                        }
+                    }
+                }
+            }
+            
+            let restaurantDetail = RestaurantDetail(imageURLs: imageURLs, businessHours: businessHours, isOpen: isOpen)
+                        
+            completion(true, nil, restaurantDetail)
         }
         task.resume()
     }
