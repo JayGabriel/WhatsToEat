@@ -13,9 +13,13 @@ import UIKit
 
 protocol RestaurantDetailViewModelDelegate {
     func didReceiveRestaurantDetails()
+    func errorOccurred(errorMessage: String)
 }
 
 class RestaurantDetailViewModel {
+    private struct Constants {
+        static let loadRestaurantDetailErrorMessage: String = "Failed to load detailed restaurant data."
+    }
     
     // MARK: - Properties
     
@@ -111,7 +115,14 @@ class RestaurantDetailViewModel {
     
     private func getDetailedRestaurantData() {
         yelpAPI.getDetailedRestaurantData(restaurantID: restaurant.id) { (success, error, restaurantDetail) in
+            
+            if let _ = error {
+                self.delegate?.errorOccurred(errorMessage: Constants.loadRestaurantDetailErrorMessage)
+                return
+            }
+            
             guard let restaurantDetail = restaurantDetail else {
+                self.delegate?.errorOccurred(errorMessage: Constants.loadRestaurantDetailErrorMessage)
                 return
             }
             

@@ -467,5 +467,12 @@ extension RestaurantDetailViewController: RestaurantDetailViewModelDelegate {
             )
         }
     }
+    
+    func errorOccurred(errorMessage: String) {
+        DispatchQueue.main.async {
+            let errorAlertController = UIAlertController.generateDismissableErrorAlertController(errorMessage: errorMessage)
+            self.present(errorAlertController, animated: true, completion: nil)
+        }
+    }
 }
 

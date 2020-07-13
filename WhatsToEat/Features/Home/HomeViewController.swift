@@ -164,6 +164,13 @@ extension HomeViewController: HomeViewModelDelegate {
         let restaurantDetailViewController = RestaurantDetailViewController(viewModel: viewModel)
         present(restaurantDetailViewController, animated: true, completion: nil)
     }
+    
+    func errorOccurred(errorMessage: String) {
+        DispatchQueue.main.async {
+            let errorAlertController = UIAlertController.generateDismissableErrorAlertController(errorMessage: errorMessage)
+            self.present(errorAlertController, animated: true, completion: nil)
+        }
+    }
 }
 
 // MARK: - SearchView Delegate

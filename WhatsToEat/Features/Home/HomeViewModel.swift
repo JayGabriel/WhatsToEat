@@ -17,9 +17,14 @@ protocol HomeViewModelDelegate {
     func didChangeCurrentKeywordsString()
     func didChangeCurrentLocationString()
     func shouldDisplayRestaurantDetail(viewModel: RestaurantDetailViewModel)
+    func errorOccurred(errorMessage: String)
 }
 
 class HomeViewModel: NSObject {
+    private struct Constants {
+        static let loadRestaurantsErrorMessage: String = "Failed to load restaurant data."
+        static let loadLocationErrorMessage: String = "Failed to load location."
+    }
     
     // MARK: - Properties
 
@@ -139,10 +144,16 @@ extension HomeViewModel {
             geocodeLocationString(cityToGeocode: locationText, completionHandlerForGeocode: {
                 (success, error, result) in
                 
+                if error != nil {
+                    self.delegate?.errorOccurred(errorMessage: Constants.loadLocationErrorMessage)
+                    return
+                }
+                
                 guard
                     let locationDictionary = result,
                     let locationString = locationDictionary["locationString"] as? String,
                     let location = locationDictionary["location"] as? CLLocation else {
+                        self.delegate?.errorOccurred(errorMessage: Constants.loadLocationErrorMessage)
                         return
                 }
                 self.currentSearchLocation = location
@@ -152,7 +163,10 @@ extension HomeViewModel {
                                           location: location)
             })
         } else {
-            guard let location = currentSearchLocation else { return }
+            guard let location = currentSearchLocation else {
+                delegate?.errorOccurred(errorMessage: Constants.loadLocationErrorMessage)
+                return
+            }
             searchForRestaurants(keywords: keywordText,
                                  limit: 5,
                                  location: location)
@@ -172,7 +186,6 @@ extension HomeViewModel {
     }
     
     private func calculateNewRegion(from restaurants: [Restuarant]) -> MKCoordinateRegion? {
-        
         var minLatitude: Double?, maxLatitude: Double?, minLongitude: Double?, maxLongitude: Double?
         
         for restaurant in restaurants {
@@ -214,7 +227,8 @@ extension HomeViewModel: CLLocationManagerDelegate {
         
         self.currentSearchLocation = location
         CLGeocoder().reverseGeocodeLocation(location, completionHandler: { placemark, error in
-            if let error = error {
+            if error != nil {
+                self.delegate?.errorOccurred(errorMessage: Constants.loadRestaurantsErrorMessage)
                 return
             }
             
@@ -222,7 +236,10 @@ extension HomeViewModel: CLLocationManagerDelegate {
                 let foundPlacemarks = placemark,
                 let firstPlacemark = foundPlacemarks.first,
                 let state = firstPlacemark.administrativeArea,
-                let city = firstPlacemark.locality else { return }
+                let city = firstPlacemark.locality else {
+                    self.delegate?.errorOccurred(errorMessage: Constants.loadRestaurantsErrorMessage)
+                    return
+            }
             
             self.currentSearchLocationString = "\(city), \(state)"
         })
@@ -238,6 +255,7 @@ extension HomeViewModel: CLLocationManagerDelegate {
         geocoder.geocodeAddressString(cityToGeocode, completionHandler: { (placemark, error) in
 
             if error != nil {
+                self.delegate?.errorOccurred(errorMessage: Constants.loadLocationErrorMessage)
                 return
             }
             
@@ -249,6 +267,7 @@ extension HomeViewModel: CLLocationManagerDelegate {
                 let location = firstPlacemark.location,
                 let countryCode = firstPlacemark.isoCountryCode
             else {
+                self.delegate?.errorOccurred(errorMessage: Constants.loadRestaurantsErrorMessage)
                 return
             }
         
