@@ -59,14 +59,6 @@ class SupplementaryImageCollectionViewCell: UICollectionViewCell {
     }
     
     private func animateHighlighted() {
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.025) {
-                if self.isHighlighted {
-                    self.alpha = 0.5
-                } else {
-                    self.alpha = 1
-                }
-            }
-        }
+        self.animateAlpha(highlighted: isHighlighted)
     }
 }

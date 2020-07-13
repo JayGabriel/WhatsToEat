@@ -15,7 +15,7 @@ class HomeViewController: UIViewController {
         
         static let resultsTableViewBottomOffset: CGFloat = -10.0
 
-        static let toolbarViewHeight: CGFloat = 60.0
+        static let toolbarViewHeight: CGFloat = 70.0
         static let toolbarViewLeftAnchor: CGFloat = 45.0
         static let toolbarViewRightAnchor: CGFloat = -45.0
         static let toolbarBottomAnchorOffset: CGFloat = -20.0
@@ -66,6 +66,7 @@ class HomeViewController: UIViewController {
         tableview.delegate = self
         tableview.dataSource = self
         tableview.separatorStyle = .none
+        tableview.delaysContentTouches = false
         return tableview
     }()
         
@@ -92,8 +93,6 @@ class HomeViewController: UIViewController {
         viewModel.viewDidLoad()
     }
     
-
-    
     // MARK: - Layout
     
     private func setupView() {
@@ -102,7 +101,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes =  [NSAttributedString.Key.foregroundColor : UIColor.white]
         navigationController?.navigationBar.barTintColor = Constants.navigationBarColor
         navigationController?.navigationBar.isTranslucent = false
-        
+                
         view.addSubview(mapView)
         view.addSubview(blurView)
         view.addSubview(resultsTableView)
@@ -245,6 +244,20 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? RestaurantListTableViewCell else {
+                fatalError("Failed to dequeue a RestaurantListTableViewCell")
+            }
+            cell.setHighlightedUI(highlighted: true)
+        }
+    
+    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? RestaurantListTableViewCell else {
+            fatalError("Failed to dequeue a RestaurantListTableViewCell")
+        }
+        cell.setHighlightedUI(highlighted: false)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

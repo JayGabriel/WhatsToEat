@@ -1,5 +1,5 @@
 //
-//  UIImage+Extensions.swift
+//  UIImageView+Extensions.swift
 //  WhatsToEat
 //
 //  Created by Jay on 6/2/20.
