@@ -24,6 +24,7 @@ class HomeViewModel: NSObject {
     private struct Constants {
         static let loadRestaurantsErrorMessage: String = "Failed to load restaurant data."
         static let loadLocationErrorMessage: String = "Failed to load location."
+        static let locationNotSetErrorMessage: String = "Location not set."
     }
     
     // MARK: - Properties
@@ -84,12 +85,9 @@ extension HomeViewModel {
         locationManager.startUpdatingLocation()
     }
     
-    public func settingsButtonTapped() {
-        
-    }
-    
     public func randomButtonTapped() {
         guard let locationText = self.currentSearchLocationString else {
+            delegate?.errorOccurred(errorMessage: Constants.locationNotSetErrorMessage)
             return
         }
         
@@ -100,7 +98,7 @@ extension HomeViewModel {
                 let location = locationDictionary["location"] as? CLLocation,
                 let countryCode = locationDictionary["countryCode"] as? String,
                 let keywordText = YelpAPIConstants.CountryStyles.AllStyles.filter({$0.2.contains(countryCode)}).randomElement()?.1 else {
-                    print("fail")
+                    self.delegate?.errorOccurred(errorMessage: Constants.loadLocationErrorMessage)
                     return
             }
                         
@@ -246,6 +244,12 @@ extension HomeViewModel: CLLocationManagerDelegate {
         
         delegate?.didUpdateRegion(region: MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.1), longitudeDelta: CLLocationDegrees(0.1))))
         locationManager.stopUpdatingLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedAlways || status == .authorizedWhenInUse {
+            locationManager.startUpdatingLocation()
+        }
     }
     
     func geocodeLocationString(cityToGeocode: String, completionHandlerForGeocode: @escaping(_ result: Bool, _ errorString: String?, _ result: [String:Any]?) -> Void) {
