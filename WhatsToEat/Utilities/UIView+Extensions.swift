@@ -17,4 +17,36 @@ extension UIView {
         layer.shadowOpacity = opacity
         layer.shadowRadius = radius
     }
+    
+    func animateAlpha(highlighted: Bool) {
+        DispatchQueue.main.async {
+            UIView.animate(
+                withDuration: 0.05,
+                animations: {
+                    if highlighted {
+                        self.alpha = 0.5
+                    } else {
+                        self.alpha = 1.0
+                    }
+                }
+            )
+        }
+    }
+    
+    func animatePulse(highlighted: Bool, scale: CGFloat) {
+        DispatchQueue.main.async {
+            UIView.animate(
+                withDuration: 0.15,
+                delay: 0.0,
+                options: .curveEaseInOut,
+                animations: {
+                    if highlighted {
+                        self.transform = CGAffineTransform(scaleX: scale, y: scale)
+                    } else {
+                        self.transform = .identity
+                    }
+                }
+            )
+        }
+    }
 }

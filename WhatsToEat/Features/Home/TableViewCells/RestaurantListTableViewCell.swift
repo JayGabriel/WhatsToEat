@@ -64,6 +64,7 @@ class RestaurantListTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
         setupView()
         setupConstraints()
     }
@@ -111,5 +112,9 @@ class RestaurantListTableViewCell: UITableViewCell {
             shaderView.topAnchor.constraint(equalTo: previewImage.topAnchor),
             shaderView.bottomAnchor.constraint(equalTo: previewImage.bottomAnchor),
         ])
+    }
+    
+    func setHighlightedUI(highlighted: Bool) {
+        self.animateAlpha(highlighted: highlighted)
     }
 }

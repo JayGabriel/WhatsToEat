@@ -17,13 +17,13 @@ class RestaurantDetailViewController: UIViewController {
         static let nameLabelLeadingAnchor: CGFloat = 10.0
         static let nameLabelTrailingAnchor: CGFloat = -10.0
         
-        static let directionsPhoneButtonsStackViewLeadingAnchor: CGFloat = 5.0
-        static let directionsPhoneButtonsStackViewTrailingAnchor: CGFloat = -5.0
+        static let directionsPhoneButtonsStackViewLeadingAnchor: CGFloat = 15
+        static let directionsPhoneButtonsStackViewTrailingAnchor: CGFloat = -15.0
         
         static let bannerImageViewHeightMultiplier: CGFloat = 0.3
         static let nameLabelContainerViewHeightMultiplier: CGFloat = 0.05
         static let categoryLabelHeightMultiplier: CGFloat = 0.05
-        static let distanceRatingPriceStackViewHeightMultiplier: CGFloat = 0.04
+        static let distanceRatingPriceStackViewHeightMultiplier: CGFloat = 0.035
         static let reviewCountLabelHeightMultiplier: CGFloat = 0.025
         static let addressLabelHeightMultiplier: CGFloat = 0.1
         static let actionButtonsContainerViewHeightMultiplier: CGFloat = 0.1
@@ -183,49 +183,42 @@ class RestaurantDetailViewController: UIViewController {
         directionsPhoneButtonsStackView.axis = .horizontal
         directionsPhoneButtonsStackView.alignment = .fill
         directionsPhoneButtonsStackView.distribution = .fillEqually
-        directionsPhoneButtonsStackView.spacing = 5
+        directionsPhoneButtonsStackView.spacing = 15
         return directionsPhoneButtonsStackView
     }()
     
-    private lazy var directionsButton: UIButton = {
-        let directionsButton = UIButton(type: .custom)
+    private lazy var directionsButton: AnimatedButton = {
+        let directionsButton = AnimatedButton()
         directionsButton.translatesAutoresizingMaskIntoConstraints = false
-        directionsButton.addTarget(self, action: #selector(buttonHighLighted), for: .touchDown)
-        directionsButton.addTarget(self, action: #selector(buttonUnhighlighted), for: .touchCancel)
+        directionsButton.addTarget(self, action: #selector(directionsButtonPressed), for: .touchUpInside)
         directionsButton.setTitle(" Maps ", for: .normal)
         directionsButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .light)
         directionsButton.setImage(.directionsIcon, for: .normal)
         directionsButton.tintColor = .white
-        directionsButton.addTarget(self, action: #selector(directionsButtonPressed), for: .touchUpInside)
         directionsButton.backgroundColor = .systemBlue
         directionsButton.adjustsImageWhenHighlighted = false
         return directionsButton
     }()
     
-    private lazy var yelpButton: UIButton = {
-        let yelpButton =  UIButton(type: .custom)
+    private lazy var yelpButton: AnimatedButton = {
+        let yelpButton =  AnimatedButton()
         yelpButton.translatesAutoresizingMaskIntoConstraints = false
         yelpButton.addTarget(self, action: #selector(yelpButtonPressed), for: .touchUpInside)
-        yelpButton.addTarget(self, action: #selector(buttonHighLighted), for: .touchDown)
-        yelpButton.addTarget(self, action: #selector(buttonUnhighlighted), for: .touchCancel)
         yelpButton.setImage(.yelpLogo, for: .normal)
         yelpButton.adjustsImageWhenHighlighted = false
-        yelpButton.clipsToBounds = true
         yelpButton.imageView?.contentMode = .scaleAspectFit
         yelpButton.backgroundColor = UIColor(named: "YelpRed")
         return yelpButton
     }()
     
-    private lazy var phoneButton: UIButton = {
-        let phoneButton = UIButton(type: .custom)
+    private lazy var phoneButton: AnimatedButton = {
+        let phoneButton = AnimatedButton()
         phoneButton.translatesAutoresizingMaskIntoConstraints = false
-        phoneButton.addTarget(self, action: #selector(buttonHighLighted), for: .touchDown)
-        phoneButton.addTarget(self, action: #selector(buttonUnhighlighted), for: .touchCancel)
+        phoneButton.addTarget(self, action: #selector(phoneButtonPressed), for: .touchUpInside)
         phoneButton.setImage(.phoneIcon, for: .normal)
         phoneButton.setTitle(" Call ", for: .normal)
         phoneButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .light)
         phoneButton.tintColor = .white
-        phoneButton.addTarget(self, action: #selector(phoneButtonPressed), for: .touchUpInside)
         phoneButton.adjustsImageWhenHighlighted = false
         phoneButton.backgroundColor = .systemOrange
         return phoneButton
@@ -387,16 +380,12 @@ class RestaurantDetailViewController: UIViewController {
     }
     
     @objc private func yelpButtonPressed() {
-        buttonUnhighlighted(sender: yelpButton)
-        
         if let mediaURL = URL(string: viewModel.url), UIApplication.shared.canOpenURL(mediaURL) {
             UIApplication.shared.open(mediaURL)
         }
     }
     
     @objc private func directionsButtonPressed() {
-        buttonUnhighlighted(sender: directionsButton)
-        
         let coordinate = CLLocationCoordinate2D(latitude: viewModel.latitude, longitude: viewModel.longitude)
         let placemark = MKPlacemark(coordinate: coordinate)
         let mapItem = MKMapItem(placemark: placemark)
@@ -404,27 +393,9 @@ class RestaurantDetailViewController: UIViewController {
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
     
-    @objc private func phoneButtonPressed() {
-        buttonUnhighlighted(sender: phoneButton)
-        
+    @objc private func phoneButtonPressed() {        
         if let url = URL(string: "tel://\(viewModel.phone)"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)
-        }
-    }
-    
-    @objc private func buttonHighLighted(sender: UIButton) {
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.05) {
-                sender.alpha = 0.5
-            }
-        }
-    }
-    
-    @objc private func buttonUnhighlighted(sender: UIButton) {
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.05) {
-                sender.alpha = 1
-            }
         }
     }
 }

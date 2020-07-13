@@ -19,10 +19,6 @@ class ToolbarView: UIView {
     private enum Constants {
         static let raisedOffset: CGFloat = UIDevice().hasBottomSafeAreaInset ? 30.0 : 0.0
         static let buttonColor = UIColor(red: 207/255, green: 78/255, blue: 222/255, alpha: 1)
-        static let shadowColor: CGColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5).cgColor
-        static let shadowOffset: CGSize = CGSize(width: 0.0, height: 5.0)
-        static let shadowOpacity: Float = 0.75
-        static let shadowRadius: CGFloat = 10.0
     }
     
     // MARK: - Properties
@@ -33,33 +29,33 @@ class ToolbarView: UIView {
     
     private var showsMapIcon: Bool = false
     
-    private lazy var toggleViewButton: UIButton = {
-        let toggleViewButton = UIButton(type: .system)
+    private lazy var toggleViewButton: AnimatedButton = {
+        let toggleViewButton = AnimatedButton()
         toggleViewButton.translatesAutoresizingMaskIntoConstraints = false
+        toggleViewButton.addTarget(self, action: #selector(didTapToggleViewButton), for: .touchUpInside)
         toggleViewButton.setImage(.listIcon, for: .normal)
         toggleViewButton.backgroundColor = Constants.buttonColor
         toggleViewButton.tintColor = .white
-        toggleViewButton.addTarget(self, action: #selector(didTapToggleViewButton), for: .touchUpInside)
         return toggleViewButton
     }()
     
-    private lazy var randomButton: UIButton = {
-        let searchButton = UIButton(type: .system)
+    private lazy var randomButton: AnimatedButton = {
+        let searchButton = AnimatedButton()
         searchButton.translatesAutoresizingMaskIntoConstraints = false
+        searchButton.addTarget(self, action: #selector(didTapRandomButton), for: .touchUpInside)
         searchButton.setImage(.randomIcon, for: .normal)
         searchButton.tintColor = .white
         searchButton.backgroundColor = Constants.buttonColor
-        searchButton.addTarget(self, action: #selector(didTapRandomButton), for: .touchUpInside)
         return searchButton
     }()
     
-    private lazy var refreshButton: UIButton = {
-        let refreshButton = UIButton(type: .system)
+    private lazy var refreshButton: AnimatedButton = {
+        let refreshButton = AnimatedButton()
         refreshButton.translatesAutoresizingMaskIntoConstraints = false
+        refreshButton.addTarget(self, action: #selector(didTapRefreshButton), for: .touchUpInside)
         refreshButton.setImage(.refreshIcon, for: .normal)
         refreshButton.backgroundColor = Constants.buttonColor
         refreshButton.tintColor = .white
-        refreshButton.addTarget(self, action: #selector(didTapRefreshButton), for: .touchUpInside)
         return refreshButton
     }()
     
@@ -91,21 +87,6 @@ class ToolbarView: UIView {
         buttonsStackView.addArrangedSubview(generateContainer(randomButton))
         buttonsStackView.addArrangedSubview(generateContainer(refreshButton))
         addSubview(buttonsStackView)
-
-        toggleViewButton.addShadow(color: Constants.shadowColor,
-                               offset: Constants.shadowOffset,
-                               opacity: Constants.shadowOpacity,
-                               radius: Constants.shadowRadius)
-        
-        randomButton.addShadow(color: Constants.shadowColor,
-                               offset: Constants.shadowOffset,
-                               opacity: Constants.shadowOpacity,
-                               radius: Constants.shadowRadius)
-        
-        refreshButton.addShadow(color: Constants.shadowColor,
-                               offset: Constants.shadowOffset,
-                               opacity: Constants.shadowOpacity,
-                               radius: Constants.shadowRadius)
     }
     
     private func setupConstraints() {
