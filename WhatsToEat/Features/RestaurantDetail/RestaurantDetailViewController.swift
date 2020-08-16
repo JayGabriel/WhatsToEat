@@ -13,6 +13,8 @@ class RestaurantDetailViewController: UIViewController {
     private enum Constants {
         static let navigationBarColor: UIColor = .WhatsToEatPrimary
         static let backgroundColor = UIColor.white
+
+        static let contentStackViewBottomAnchor: CGFloat = UIDevice().hasBottomSafeAreaInset ? 0 : -15.0
         
         static let nameLabelLeadingAnchor: CGFloat = 10.0
         static let nameLabelTrailingAnchor: CGFloat = -10.0
@@ -61,7 +63,7 @@ class RestaurantDetailViewController: UIViewController {
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.font = .restaurantDetailName
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         return label
@@ -76,7 +78,7 @@ class RestaurantDetailViewController: UIViewController {
     private let categoryLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.font = .restaurantDetailCategory
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         return label
@@ -87,7 +89,7 @@ class RestaurantDetailViewController: UIViewController {
     private let distanceLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.font = .restaurantDetailDistance
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.textColor = .systemYellow
@@ -104,7 +106,7 @@ class RestaurantDetailViewController: UIViewController {
     private let priceLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.font = .restaurantDetailPrice
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.textColor = .systemGreen
@@ -122,7 +124,7 @@ class RestaurantDetailViewController: UIViewController {
     
     private let reviewCountLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.italicSystemFont(ofSize: 15)
+        label.font = .restaurantDetailReviewCount
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.textColor = .lightGray
@@ -134,7 +136,7 @@ class RestaurantDetailViewController: UIViewController {
     private let addressLabel: UILabel = {
         let addressLabel = UILabel()
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
-        addressLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        addressLabel.font = .restaurantDetailAddress
         addressLabel.numberOfLines = 0
         addressLabel.textAlignment = .center
         return addressLabel
@@ -162,7 +164,7 @@ class RestaurantDetailViewController: UIViewController {
     private let businessHoursLabel: UILabel = {
         let businessHoursLabel = UILabel()
         businessHoursLabel.translatesAutoresizingMaskIntoConstraints = false
-        businessHoursLabel.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        businessHoursLabel.font = .restaurantDetailBusinessHours
         businessHoursLabel.textAlignment = .center
         businessHoursLabel.numberOfLines = 0
         businessHoursLabel.alpha = 0
@@ -192,7 +194,7 @@ class RestaurantDetailViewController: UIViewController {
         directionsButton.translatesAutoresizingMaskIntoConstraints = false
         directionsButton.addTarget(self, action: #selector(directionsButtonPressed), for: .touchUpInside)
         directionsButton.setTitle(" Maps ", for: .normal)
-        directionsButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        directionsButton.titleLabel?.font = .restaurantDetailDirecions
         directionsButton.setImage(.directionsIcon, for: .normal)
         directionsButton.tintColor = .white
         directionsButton.backgroundColor = .systemBlue
@@ -208,6 +210,7 @@ class RestaurantDetailViewController: UIViewController {
         yelpButton.adjustsImageWhenHighlighted = false
         yelpButton.imageView?.contentMode = .scaleAspectFit
         yelpButton.backgroundColor = UIColor(named: "YelpRed")
+        yelpButton.clipsToBounds = true
         return yelpButton
     }()
     
@@ -217,7 +220,7 @@ class RestaurantDetailViewController: UIViewController {
         phoneButton.addTarget(self, action: #selector(phoneButtonPressed), for: .touchUpInside)
         phoneButton.setImage(.phoneIcon, for: .normal)
         phoneButton.setTitle(" Call ", for: .normal)
-        phoneButton.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        phoneButton.titleLabel?.font = .restaurantDetailPhone
         phoneButton.tintColor = .white
         phoneButton.adjustsImageWhenHighlighted = false
         phoneButton.backgroundColor = .systemOrange
@@ -327,7 +330,7 @@ class RestaurantDetailViewController: UIViewController {
             contentStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentStackView.topAnchor.constraint(equalTo: view.topAnchor),
-            contentStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            contentStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Constants.contentStackViewBottomAnchor),
             
             nameLabel.leadingAnchor.constraint(equalTo: nameLabelContainerView.leadingAnchor, constant: Constants.nameLabelLeadingAnchor),
             nameLabel.trailingAnchor.constraint(equalTo: nameLabelContainerView.trailingAnchor, constant: Constants.nameLabelTrailingAnchor),

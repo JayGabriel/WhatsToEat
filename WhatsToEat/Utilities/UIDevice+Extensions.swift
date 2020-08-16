@@ -13,4 +13,8 @@ extension UIDevice {
         let bottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
         return bottom > 0
     }
+    
+    var iPhoneSE: Bool {
+        return UIScreen.main.nativeBounds.height == 1334.0
+    }
 }

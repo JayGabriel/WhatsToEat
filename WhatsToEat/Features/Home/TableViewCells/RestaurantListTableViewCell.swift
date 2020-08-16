@@ -18,7 +18,7 @@ class RestaurantListTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.systemFont(ofSize: 32, weight: .heavy)
+        label.font = .restaurantListTableViewCellName
         label.textColor = .white
         return label
     }()
@@ -27,7 +27,7 @@ class RestaurantListTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 28, weight: .bold)
+        label.font = .restaurantListTableViewCellKind
         label.textColor = .white
         return label
     }()
