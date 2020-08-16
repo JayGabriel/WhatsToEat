@@ -55,7 +55,7 @@ class SearchView: UIView {
         button.addTarget(self, action: #selector(expand), for: .touchUpInside)
         button.setTitleColor(.white, for: .normal)
         button.setTitle("Find something to eat...", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        button.titleLabel?.font = .searchViewTitleLabel
         return button
     }()
         
@@ -77,7 +77,7 @@ class SearchView: UIView {
         textField.autocorrectionType = .no
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = "What kind of food?"
-        textField.font = UIFont.systemFont(ofSize: 22, weight: .heavy)
+        textField.font = .searchViewKeywordField
         textField.textAlignment = .center
         textField.textColor = .white
         textField.backgroundColor = Constants.backgroundColor
@@ -92,7 +92,7 @@ class SearchView: UIView {
         textField.autocorrectionType = .no
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = "Where to search?"
-        textField.font = UIFont.systemFont(ofSize: 21, weight: .light)
+        textField.font = .searchViewLocationTextField
         textField.textAlignment = .center
         textField.textColor = .white
         textField.backgroundColor = Constants.backgroundColor
