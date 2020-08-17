@@ -210,7 +210,7 @@ class RestaurantDetailViewController: UIViewController {
         yelpButton.adjustsImageWhenHighlighted = false
         yelpButton.imageView?.contentMode = .scaleAspectFit
         yelpButton.backgroundColor = UIColor(named: "YelpRed")
-        yelpButton.clipsToBounds = true
+        yelpButton.imageView?.clipsToBounds = true
         return yelpButton
     }()
     
