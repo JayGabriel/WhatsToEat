@@ -19,10 +19,12 @@ class HomeViewController: UIViewController {
         static let toolbarViewLeftAnchor: CGFloat = 45.0
         static let toolbarViewRightAnchor: CGFloat = -45.0
         static let toolbarBottomAnchorOffset: CGFloat = -20.0
+        
+        static let activityIndicatorHeightAnchor: CGFloat = 50.0
     }
 
     // MARK: - Properties
-    
+        
     // MARK: UI Elements
     
     private lazy var mapView: MKMapView = {
@@ -69,6 +71,25 @@ class HomeViewController: UIViewController {
         tableview.delaysContentTouches = false
         return tableview
     }()
+    
+    // MARK: Activity Indicator
+    
+    private let loadingTintView: UIView = {
+        let activityIndicatorContainer = UIView()
+        activityIndicatorContainer.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicatorContainer.backgroundColor = .black
+        activityIndicatorContainer.alpha = 0
+        return activityIndicatorContainer
+    }()
+    
+    private let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = .white
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = true
+        return activityIndicator
+    }()
         
     // MARK: View Model
             
@@ -101,12 +122,15 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.titleTextAttributes =  [NSAttributedString.Key.foregroundColor : UIColor.white]
         navigationController?.navigationBar.barTintColor = Constants.navigationBarColor
         navigationController?.navigationBar.isTranslucent = false
+        
                 
         view.addSubview(mapView)
         view.addSubview(blurView)
         view.addSubview(resultsTableView)
         view.addSubview(searchView)
         view.addSubview(toolbarView)
+        view.addSubview(loadingTintView)
+        view.addSubview(activityIndicator)
     }
     
     private func setupConstraints() {
@@ -133,17 +157,60 @@ class HomeViewController: UIViewController {
             toolbarView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: Constants.toolbarViewLeftAnchor),
             toolbarView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: Constants.toolbarViewRightAnchor),
             toolbarView.bottomAnchor.constraint(equalTo: UIDevice().hasBottomSafeAreaInset ?  view.safeAreaLayoutGuide.bottomAnchor : view.bottomAnchor, constant: Constants.toolbarBottomAnchorOffset),
-            toolbarView.heightAnchor.constraint(equalToConstant: Constants.toolbarViewHeight)
+            toolbarView.heightAnchor.constraint(equalToConstant: Constants.toolbarViewHeight),
+            
+            loadingTintView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loadingTintView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loadingTintView.topAnchor.constraint(equalTo: resultsTableView.topAnchor),
+            loadingTintView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            activityIndicator.heightAnchor.constraint(equalToConstant: Constants.activityIndicatorHeightAnchor),
+            activityIndicator.widthAnchor.constraint(equalToConstant: Constants.activityIndicatorHeightAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: loadingTintView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: loadingTintView.centerYAnchor)
         ])
+    }
+    
+    private func animateActivityIndicatorView(isLoading: Bool) {
+        DispatchQueue.main.async {
+            if isLoading {
+                self.loadingTintView.isHidden = false
+                self.activityIndicator.isHidden = false
+                UIView.animate(
+                    withDuration: 0.15,
+                    animations: {
+                        self.loadingTintView.alpha = 0.7
+                        self.activityIndicator.alpha = 1
+                        self.resultsTableView.reloadData()
+                    }
+                )
+            } else {
+                UIView.animate(
+                    withDuration: 0.15,
+                    animations: {
+                        self.loadingTintView.alpha = 0
+                        self.activityIndicator.alpha = 0
+                    }, completion: { _ in
+                        self.loadingTintView.isHidden = true
+                        self.activityIndicator.isHidden = true
+                    }
+                )
+            }
+        }
     }
 }
 
 // MARK: - HomeViewModelDelegate
-extension HomeViewController: HomeViewModelDelegate {    
-    func didReceiveRestaurantsData() {
+extension HomeViewController: HomeViewModelDelegate {
+    func didStartSearch() {
+        animateActivityIndicatorView(isLoading: true)
+    }
+    
+    func didEndSearch() {
         updateResultsTableViewData()
         createMapAnnotations()
         searchView.contract()
+        animateActivityIndicatorView(isLoading: false)
     }
     
     func didUpdateRegion(region: MKCoordinateRegion) {
@@ -186,11 +253,11 @@ extension HomeViewController: SearchViewDelegate {
 
 extension HomeViewController: ToolbarViewDelegate {
     func didTapListButton() {
-        animateTableView(shouldShow: true)
+        toggleListView(shouldShow: true)
     }
     
     func didTapMapButton() {
-        animateTableView(shouldShow: false)
+        toggleListView(shouldShow: false)
     }
     
     func didTapRandomButton() {
@@ -287,7 +354,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
        
-    private func animateTableView(shouldShow: Bool) {
+    private func toggleListView(shouldShow: Bool) {
         if shouldShow {
             resultsTableView.alpha = 0
             resultsTableView.isHidden = false
