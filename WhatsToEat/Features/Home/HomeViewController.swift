@@ -20,6 +20,10 @@ class HomeViewController: UIViewController {
         static let toolbarViewRightAnchor: CGFloat = -45.0
         static let toolbarBottomAnchorOffset: CGFloat = -20.0
         
+        static let emptyResultsContainerViewLeadingAnchor: CGFloat = 10
+        static let emptyResultsContainerViewTrailingAnchor: CGFloat = -10
+        static let emptyResultsContainerViewHeightMultiplier: CGFloat = 0.2
+        
         static let activityIndicatorHeightAnchor: CGFloat = 50.0
     }
 
@@ -90,6 +94,27 @@ class HomeViewController: UIViewController {
         activityIndicator.isHidden = true
         return activityIndicator
     }()
+    
+    private lazy var emptyResultsContainerView: UIVisualEffectView = {
+        let emptyResultsContainerEffect = UIBlurEffect(style: .light)
+        let emptyResultsContainerView = UIVisualEffectView(effect: emptyResultsContainerEffect)
+        emptyResultsContainerView.isHidden = true
+        emptyResultsContainerView.translatesAutoresizingMaskIntoConstraints = false
+        emptyResultsContainerView.layer.cornerRadius = 10
+        emptyResultsContainerView.layer.masksToBounds = true
+        return emptyResultsContainerView
+    }()
+    
+    private let emptyResultsLabel: UILabel = {
+        let emptyResultsLabel = UILabel()
+        emptyResultsLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyResultsLabel.font = .emptyResultsLabel
+        emptyResultsLabel.numberOfLines = 0
+        emptyResultsLabel.textAlignment = .center
+        emptyResultsLabel.backgroundColor = .clear
+        emptyResultsLabel.lineBreakMode = .byTruncatingTail
+        return emptyResultsLabel
+    }()
         
     // MARK: View Model
             
@@ -123,6 +148,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.barTintColor = Constants.navigationBarColor
         navigationController?.navigationBar.isTranslucent = false
         
+        emptyResultsContainerView.contentView.addSubview(emptyResultsLabel)
                 
         view.addSubview(mapView)
         view.addSubview(blurView)
@@ -131,6 +157,7 @@ class HomeViewController: UIViewController {
         view.addSubview(toolbarView)
         view.addSubview(loadingTintView)
         view.addSubview(activityIndicator)
+        view.addSubview(emptyResultsContainerView)
     }
     
     private func setupConstraints() {
@@ -167,7 +194,17 @@ class HomeViewController: UIViewController {
             activityIndicator.heightAnchor.constraint(equalToConstant: Constants.activityIndicatorHeightAnchor),
             activityIndicator.widthAnchor.constraint(equalToConstant: Constants.activityIndicatorHeightAnchor),
             activityIndicator.centerXAnchor.constraint(equalTo: loadingTintView.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: loadingTintView.centerYAnchor)
+            activityIndicator.centerYAnchor.constraint(equalTo: loadingTintView.centerYAnchor),
+            
+            emptyResultsContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.emptyResultsContainerViewLeadingAnchor),
+            emptyResultsContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.emptyResultsContainerViewTrailingAnchor),
+            emptyResultsContainerView.heightAnchor.constraint(equalTo: resultsTableView.heightAnchor, multiplier: Constants.emptyResultsContainerViewHeightMultiplier),
+            emptyResultsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            emptyResultsLabel.leadingAnchor.constraint(equalTo: emptyResultsContainerView.leadingAnchor, constant: Constants.emptyResultsContainerViewLeadingAnchor),
+            emptyResultsLabel.trailingAnchor.constraint(equalTo: emptyResultsContainerView.trailingAnchor, constant: Constants.emptyResultsContainerViewTrailingAnchor),
+            emptyResultsLabel.topAnchor.constraint(equalTo: emptyResultsContainerView.topAnchor),
+            emptyResultsLabel.bottomAnchor.constraint(equalTo: emptyResultsContainerView.bottomAnchor),
         ])
     }
     
@@ -198,12 +235,24 @@ class HomeViewController: UIViewController {
             }
         }
     }
+    
+    private func setupEmptyResultsLabel(hidden: Bool? = nil) {
+        DispatchQueue.main.async {
+            if let hidden = hidden {
+                self.emptyResultsContainerView.isHidden = hidden
+                return
+            }
+            self.emptyResultsLabel.text = "No results found for \"\(self.searchView.keywordText)\""
+            self.emptyResultsContainerView.isHidden = !self.viewModel.restaurantData.isEmpty
+        }
+    }
 }
 
 // MARK: - HomeViewModelDelegate
 extension HomeViewController: HomeViewModelDelegate {
     func didStartSearch() {
         animateActivityIndicatorView(isLoading: true)
+        setupEmptyResultsLabel(hidden: true)
     }
     
     func didEndSearch() {
@@ -211,6 +260,7 @@ extension HomeViewController: HomeViewModelDelegate {
         createMapAnnotations()
         searchView.contract()
         animateActivityIndicatorView(isLoading: false)
+        setupEmptyResultsLabel()
     }
     
     func didUpdateRegion(region: MKCoordinateRegion) {
@@ -243,6 +293,9 @@ extension HomeViewController: HomeViewModelDelegate {
 // MARK: - SearchView Delegate
 
 extension HomeViewController: SearchViewDelegate {
+    func didBeginEditing() {
+        setupEmptyResultsLabel(hidden: true)
+    }
     func didEnterSearch(keyword: String, location: String?) {
         updateResultsTableViewData()
         viewModel.searchButtonTapped(keywordText: keyword, locationText: location)

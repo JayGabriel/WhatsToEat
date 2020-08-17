@@ -9,6 +9,8 @@
 import UIKit
 
 extension UIFont {
+    static let emptyResultsLabel = UIFont.systemFont(ofSize: 18, weight: .semibold)
+    
     static let searchViewTitleLabel = UIFont.systemFont(ofSize: 15, weight: .semibold)
     static let searchViewKeywordField = UIFont.systemFont(ofSize: 22, weight: .heavy)
     static let searchViewLocationTextField = UIFont.systemFont(ofSize: 21, weight: .light)

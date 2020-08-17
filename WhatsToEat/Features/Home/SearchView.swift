@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 protocol SearchViewDelegate {
+    func didBeginEditing()
     func didEnterSearch(keyword: String, location: String?) -> Void
 }
 
@@ -239,6 +240,7 @@ extension SearchView: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        delegate?.didBeginEditing()
         if textField.text != nil {
             previousSearchValue = textField.text
             textField.text?.removeAll()
