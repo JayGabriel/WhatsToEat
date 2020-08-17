@@ -12,7 +12,8 @@ import MapKit
 // MARK: - View Model Output
 
 protocol HomeViewModelDelegate {
-    func didReceiveRestaurantsData()
+    func didStartSearch()
+    func didEndSearch()
     func didUpdateRegion(region: MKCoordinateRegion)
     func didChangeCurrentKeywordsString()
     func didChangeCurrentLocationString()
@@ -40,9 +41,7 @@ class HomeViewModel: NSObject {
     var delegate: HomeViewModelDelegate?
     
     // MARK: Data Source
-    private(set) var restaurantData = [Restuarant]() {
-        didSet { self.delegate?.didReceiveRestaurantsData() }
-    }
+    private(set) var restaurantData = [Restuarant]()
     
     var restaurantTableCellViewModels: [RestaurantListTableViewCellViewModel] {
         return restaurantData.map {
@@ -172,6 +171,8 @@ extension HomeViewModel {
     }
     
     private func searchForRestaurants(keywords: String, limit: Int, location: CLLocation) {
+        self.restaurantData = []
+        delegate?.didStartSearch()
         yelpAPI.searchForRestaurants(keywords: keywords,
                                      limit: limit,
                                      latitude: location.coordinate.latitude,
@@ -180,6 +181,7 @@ extension HomeViewModel {
             self.restaurantData = results
             guard let region = self.calculateNewRegion(from: results) else { return }
             self.delegate?.didUpdateRegion(region: region)
+            self.delegate?.didEndSearch()
         }
     }
     
