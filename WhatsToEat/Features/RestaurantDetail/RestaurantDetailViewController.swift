@@ -209,7 +209,7 @@ class RestaurantDetailViewController: UIViewController {
         yelpButton.setImage(.yelpLogo, for: .normal)
         yelpButton.adjustsImageWhenHighlighted = false
         yelpButton.imageView?.contentMode = .scaleAspectFit
-        yelpButton.backgroundColor = UIColor(named: "YelpRed")
+        yelpButton.backgroundColor = .YelpBrand
         yelpButton.imageView?.clipsToBounds = true
         return yelpButton
     }()

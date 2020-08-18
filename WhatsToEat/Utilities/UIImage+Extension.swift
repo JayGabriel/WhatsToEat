@@ -9,6 +9,11 @@
 import UIKit
 
 extension UIImage {
+    static let aboutIcon: UIImage = #imageLiteral(resourceName: "about")
+    static let githubIcon: UIImage = #imageLiteral(resourceName: "github")
+    static let icons8Icon: UIImage = #imageLiteral(resourceName: "icons8")
+    static let yelpIcon: UIImage = #imageLiteral(resourceName: "yelp")
+    
     static let randomIcon: UIImage = #imageLiteral(resourceName: "random")
     static let refreshIcon: UIImage = #imageLiteral(resourceName: "refresh")
     static let mapIcon: UIImage = #imageLiteral(resourceName: "map")

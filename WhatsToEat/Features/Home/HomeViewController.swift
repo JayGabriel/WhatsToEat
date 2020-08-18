@@ -31,6 +31,14 @@ class HomeViewController: UIViewController {
         
     // MARK: UI Elements
     
+    // MARK: About Button
+    
+    private lazy var aboutButton: UIBarButtonItem = {
+        let aboutButton = UIBarButtonItem(image: .aboutIcon, style: .plain, target: self, action: #selector(aboutButtonTapped))
+        aboutButton.tintColor = .white
+        return aboutButton
+    }()
+    
     private lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.translatesAutoresizingMaskIntoConstraints = false
@@ -95,6 +103,8 @@ class HomeViewController: UIViewController {
         return activityIndicator
     }()
     
+    // MARK: Empty Results
+    
     private lazy var emptyResultsContainerView: UIVisualEffectView = {
         let emptyResultsContainerEffect = UIBlurEffect(style: .light)
         let emptyResultsContainerView = UIVisualEffectView(effect: emptyResultsContainerEffect)
@@ -142,6 +152,7 @@ class HomeViewController: UIViewController {
     // MARK: - Layout
     
     private func setupView() {
+        navigationItem.rightBarButtonItem = aboutButton
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.titleTextAttributes =  [NSAttributedString.Key.foregroundColor : UIColor.white]
@@ -245,6 +256,10 @@ class HomeViewController: UIViewController {
             self.emptyResultsLabel.text = "No results found for \"\(self.searchView.keywordText)\""
             self.emptyResultsContainerView.isHidden = !self.viewModel.restaurantData.isEmpty
         }
+    }
+    
+    @objc private func aboutButtonTapped() {
+        navigationController?.pushViewController(AboutViewController(), animated: true)
     }
 }
 
