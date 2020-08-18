@@ -14,7 +14,7 @@ extension UIDevice {
         return bottom > 0
     }
     
-    var iPhoneSE: Bool {
+    var isiPhoneSE: Bool {
         return UIScreen.main.nativeBounds.height == 1334.0
     }
 }
