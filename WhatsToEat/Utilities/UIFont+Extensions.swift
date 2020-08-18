@@ -15,11 +15,11 @@ extension UIFont {
     static let searchViewKeywordField = UIFont.systemFont(ofSize: 22, weight: .heavy)
     static let searchViewLocationTextField = UIFont.systemFont(ofSize: 21, weight: .light)
     
-    static let restaurantListTableViewCellName = UIFont.systemFont(ofSize: !UIDevice().iPhoneSE ? 32 : 25, weight: .heavy)
-    static let restaurantListTableViewCellKind = UIFont.systemFont(ofSize: !UIDevice().iPhoneSE ? 28 : 20, weight: .bold)
+    static let restaurantListTableViewCellName = UIFont.systemFont(ofSize: !UIDevice().isiPhoneSE ? 32 : 25, weight: .heavy)
+    static let restaurantListTableViewCellKind = UIFont.systemFont(ofSize: !UIDevice().isiPhoneSE ? 28 : 20, weight: .bold)
     
-    static let restaurantDetailName = UIFont.systemFont(ofSize: !UIDevice().iPhoneSE ? 32 : 25, weight: .bold)
-    static let restaurantDetailCategory = UIFont.systemFont(ofSize: !UIDevice().iPhoneSE ? 20 : 16, weight: .bold)
+    static let restaurantDetailName = UIFont.systemFont(ofSize: !UIDevice().isiPhoneSE ? 32 : 25, weight: .bold)
+    static let restaurantDetailCategory = UIFont.systemFont(ofSize: !UIDevice().isiPhoneSE ? 20 : 16, weight: .bold)
     static let restaurantDetailDistance = UIFont.systemFont(ofSize: 20, weight: .bold)
     static let restaurantDetailPrice = UIFont.systemFont(ofSize: 20, weight: .bold)
     static let restaurantDetailReviewCount = UIFont.italicSystemFont(ofSize: 15)

@@ -134,7 +134,7 @@ class RestaurantDetailViewModel {
                 let businessHours = restaurantDetail.businessHours,
                 let weekdayIndex = Calendar.current.dateComponents([.weekday], from: Date()).weekday,
                 let currentBusinessHours = businessHours.first(where: { $0.day == weekdayIndex }) {
-                self.businessHours = "Today's hours\n\(currentBusinessHours.open) - \(currentBusinessHours.closed)"
+                self.businessHours = "Today's hours:\(UIDevice().isiPhoneSE ? " " : "\n")\(currentBusinessHours.open) - \(currentBusinessHours.closed)"
             }
             
             self.delegate?.didReceiveRestaurantDetails()
