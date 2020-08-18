@@ -153,6 +153,7 @@ class HomeViewController: UIViewController {
     
     private func setupView() {
         navigationItem.rightBarButtonItem = aboutButton
+        navigationController?.navigationBar.barStyle = .black
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.titleTextAttributes =  [NSAttributedString.Key.foregroundColor : UIColor.white]
