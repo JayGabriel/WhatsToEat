@@ -4,7 +4,7 @@ Copyright © 2020 Jay Gabriel
 ## App Description
 Do you ever find yourself indecisive when it comes to food?  WhatsToEat helps you to find the best places to eat!  Whether you want to search for spots nearest you or anywhere around the world, WhatsToEat helps you find a great random selection of restaurants to choose from!  So what are you waiting for?  Discover WhatsToEat?
 
-* Restaurant data provided by Yelp: https://www.yelp.com/
+* Restaurant data provided by Yelp: https://www.yelp.com
 * Icons provided by Icons8: https://icons8.com
 
 ## App Usage 
@@ -17,22 +17,32 @@ If you allow this, your current location will be used each time the app starts. 
 ### Searching for a style
 To search for restaurants based on style (such as "ramen", "pizza", or "burgers") simply type the keyword into the text field titled "What kind of food?"
 
+<img src="https://user-images.githubusercontent.com/24850654/90663168-295b1800-e1fe-11ea-8eb0-780493f0933b.png" width="300">
+
 ### Searching for a random restaurant
 To find restaurants based on a randomized style keyword, tap the button with the `?` icon.
 
 ### Restarting a search
 To find more restaurants based on the current search keyword and location, tap the button with the refresh icon.
 
+<img src="https://user-images.githubusercontent.com/24850654/90663172-2a8c4500-e1fe-11ea-8c86-af663dc50b61.png" width="300">
+
 ### Toggling between the map and the list
 To toggle the home screen view, tap the map or list button (which will alternate based on which view is showing).
+
+<img src="https://user-images.githubusercontent.com/24850654/90660337-a4223400-e1fa-11ea-81cf-8d125e9c53f1.png" width="300"> <img src="https://user-images.githubusercontent.com/24850654/90660352-a6848e00-e1fa-11ea-984b-7f4bb4edf658.png" width="300">
 
 ### Viewing Restaurant Details
 To view more information about a restaurant, either tap its pin on the map or its cell in the list. The restaurant's main photo, name, style, distance, rating, price, address, additional photos, and current hours will be displayed.  
 
 You can also open directions to the restaurant in Apple Maps, view the business on Yelp, and make a phone call by tapping each respective button.
 
+<img src="https://user-images.githubusercontent.com/24850654/90660361-a7b5bb00-e1fa-11ea-995e-a4dbf23dd71f.png" width="300" align="center">
+
 ### Viewing the About Page
 Tapping the info icon in the top right hand corner of the home screen will display the app name, app author, as well as links to Yelp.com, Icons8.com, and this GitHub repository.
+
+<img src="https://user-images.githubusercontent.com/24850654/90660364-a8e6e800-e1fa-11ea-9a72-2b40f551350a.png" width="300">
 
 ## Code
 
