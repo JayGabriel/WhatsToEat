@@ -60,6 +60,6 @@ All static image assets are located in the project's local assets folder.  These
 
 ## About this project
 
-Originally released in October 2017, WhatsToEat was my first published iOS App on the Apple App Store: https://appadvice.com/game/app/whatstoeat/1315432302. The first iteration of this app was submitted as the final project for an online course in iOS Development.
+Originally released in December 2017, WhatsToEat was my first published iOS App on the Apple App Store: https://appadvice.com/game/app/whatstoeat/1315432302. The first iteration of this app was submitted as the final project for an online course in iOS Development.
 
 In this updated repo, I refactored the codebase to adhere to many of the best practices I have learned during my time working as a professional iOS Developer.  I plan to revisit this project every now and then to incrementally improve it as I continue to learn new skills within the iOS Development world.
