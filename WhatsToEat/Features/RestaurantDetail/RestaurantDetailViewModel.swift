@@ -24,7 +24,7 @@ class RestaurantDetailViewModel {
     // MARK: - Properties
     
     private let restaurant: Restuarant
-    private let yelpAPI: YelpAPI
+    private let yelpAPI: YelpAPIManager
     private(set) var supplementaryImageURLs = [String]()
     private(set) var businessHours: String? = nil
     private var isOpen: Int? = nil
@@ -106,7 +106,7 @@ class RestaurantDetailViewModel {
     
     // MARK: - Lifecycle
     
-    init(restaurant: Restuarant, yelpAPI: YelpAPI = .shared) {
+    init(restaurant: Restuarant, yelpAPI: YelpAPIManager = .shared) {
         self.restaurant = restaurant
         self.yelpAPI = yelpAPI
         
@@ -114,30 +114,25 @@ class RestaurantDetailViewModel {
     }
     
     private func getDetailedRestaurantData() {
-        yelpAPI.getDetailedRestaurantData(restaurantID: restaurant.id) { (success, error, restaurantDetail) in
-            
-            if let _ = error {
+        Task {
+            do {
+                let restaurantDetail = try await yelpAPI.getRestaurantDetail(id: restaurant.id)
+                
+                if let imageURLs = restaurantDetail.imageURLs {
+                    self.supplementaryImageURLs = imageURLs
+                }
+
+                if
+                    let businessHours = restaurantDetail.businessHours,
+                    let weekdayIndex = Calendar.current.dateComponents([.weekday], from: Date()).weekday,
+                    let currentBusinessHours = businessHours.first(where: { $0.day == weekdayIndex }) {
+                    self.businessHours = "Today's hours:\(await UIDevice().isiPhoneSE ? " " : "\n")\(currentBusinessHours.open) - \(currentBusinessHours.closed)"
+                }
+                
+                self.delegate?.didReceiveRestaurantDetails()
+            } catch {
                 self.delegate?.errorOccurred(errorMessage: Constants.loadRestaurantDetailErrorMessage)
-                return
             }
-            
-            guard let restaurantDetail = restaurantDetail else {
-                self.delegate?.errorOccurred(errorMessage: Constants.loadRestaurantDetailErrorMessage)
-                return
-            }
-            
-            if let imageURLs = restaurantDetail.imageURLs {
-                self.supplementaryImageURLs = imageURLs
-            }
-            
-            if
-                let businessHours = restaurantDetail.businessHours,
-                let weekdayIndex = Calendar.current.dateComponents([.weekday], from: Date()).weekday,
-                let currentBusinessHours = businessHours.first(where: { $0.day == weekdayIndex }) {
-                self.businessHours = "Today's hours:\(UIDevice().isiPhoneSE ? " " : "\n")\(currentBusinessHours.open) - \(currentBusinessHours.closed)"
-            }
-            
-            self.delegate?.didReceiveRestaurantDetails()
         }
     }
     

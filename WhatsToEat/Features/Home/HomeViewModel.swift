@@ -31,7 +31,7 @@ class HomeViewModel: NSObject {
     // MARK: - Properties
 
     // MARK: YelpAPI
-    private var yelpAPI: YelpAPI
+    private var yelpAPIManager: YelpAPIManaging
     
     // MARK: Location
     private var locationManager: CLLocationManager
@@ -59,8 +59,11 @@ class HomeViewModel: NSObject {
 
     // MARK: - Lifecycle
     
-    init(yelpAPI: YelpAPI = .shared, locationManager: CLLocationManager = CLLocationManager()) {
-        self.yelpAPI = yelpAPI
+    init(
+        yelpAPIManager: YelpAPIManaging,
+        locationManager: CLLocationManager = CLLocationManager()
+    ) {
+        self.yelpAPIManager = yelpAPIManager
         self.locationManager = locationManager
         
         super.init()
@@ -171,17 +174,24 @@ extension HomeViewModel {
     }
     
     private func searchForRestaurants(keywords: String, limit: Int, location: CLLocation) {
-        self.restaurantData = []
+        restaurantData.removeAll()
         delegate?.didStartSearch()
-        yelpAPI.searchForRestaurants(keywords: keywords,
-                                     limit: limit,
-                                     latitude: location.coordinate.latitude,
-                                     longitude: location.coordinate.longitude) { (success, error, results) in
-                               
-            self.restaurantData = results
-            guard let region = self.calculateNewRegion(from: results) else { return }
-            self.delegate?.didUpdateRegion(region: region)
-            self.delegate?.didEndSearch()
+        
+        Task {
+            do {
+                let searchParameters = RestaurantSearchParameters(
+                    keywords: keywords,
+                    limit: limit,
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude
+                )
+                restaurantData = try await yelpAPIManager.getRestaurants(searchParameters)
+                guard let region = self.calculateNewRegion(from: restaurantData) else { return }
+                delegate?.didUpdateRegion(region: region)
+                delegate?.didEndSearch()
+            } catch {
+                print(error)
+            }
         }
     }
     
