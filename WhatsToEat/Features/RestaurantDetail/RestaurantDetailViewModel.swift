@@ -136,11 +136,15 @@ class RestaurantDetailViewModel {
         }
     }
     
-    func supplementaryImageViewModelFor(_ indexPath: IndexPath) -> SupplementaryImageCollectionViewCellViewModel? {
-        guard indexPath.row < supplementaryImageURLs.count else { return nil }
-        guard let url = URL(string: supplementaryImageURLs[indexPath.row]) else { return nil}
+    func supplementaryImageViewModelFor(_ indexPath: IndexPath) async -> SupplementaryImageCollectionViewCellViewModel? {
+        guard
+            indexPath.row < supplementaryImageURLs.count,
+            let url = URL(string: supplementaryImageURLs[indexPath.row]) else {
+            return nil
+        }
+        
         do {
-            let data = try Data(contentsOf: url)
+            let (data, _) = try await URLSession.shared.data(from: url)
             let supplementaryImageCollectionViewCellViewModel = SupplementaryImageCollectionViewCellViewModel(imageData: data)
             return supplementaryImageCollectionViewCellViewModel
         } catch {

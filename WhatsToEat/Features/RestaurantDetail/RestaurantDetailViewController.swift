@@ -415,21 +415,24 @@ extension RestaurantDetailViewController: UICollectionViewDelegate, UICollection
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SupplementaryImageCollectionViewCell.reuseIdentifier, for: indexPath) as? SupplementaryImageCollectionViewCell else {
             fatalError("Failed to dequeue a \(String(describing: SupplementaryImageCollectionViewCell.self)) cell")
         }
-        if let cellViewModel = viewModel.supplementaryImageViewModelFor(indexPath) {
-            cell.configure(with: cellViewModel)
+        Task {
+            if let cellViewModel = await viewModel.supplementaryImageViewModelFor(indexPath) {
+                cell.configure(with: cellViewModel)
+            }
         }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cellViewModel = viewModel.supplementaryImageViewModelFor(indexPath) else {
-            return
+        Task {
+            guard let cellViewModel = await viewModel.supplementaryImageViewModelFor(indexPath) else {
+                return
+            }
+            let photoDetailViewController = PhotoDetailViewController()
+            photoDetailViewController.setImage(UIImage(data: cellViewModel.imageData))
+            photoDetailViewController.modalPresentationStyle = .overCurrentContext
+            present(photoDetailViewController, animated: false, completion: nil)
         }
-        
-        let photoDetailViewController = PhotoDetailViewController()
-        photoDetailViewController.setImage(UIImage(data: cellViewModel.imageData))
-        photoDetailViewController.modalPresentationStyle = .overCurrentContext
-        present(photoDetailViewController, animated: false, completion: nil)
     }
 }
 
