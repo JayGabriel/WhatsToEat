@@ -8,12 +8,17 @@
 
 import Foundation
 
-class YelpAPI {
-    
-    // MARK: - Properties
-    
-    static let shared = YelpAPI()
-    
+enum YelpAPIManagerError: Error {
+    case urlConfiguration
+    case parseResultError
+    case generic(_ description: String) // TODO specify
+}
+
+class YelpAPIManager: YelpAPIManaging {
+    private init() {}
+    static let shared = YelpAPIManager()
+
+    // MARK: - Private
     private var keywords = YelpAPIConstants.YelpParameterValues.restaurants
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
@@ -21,15 +26,10 @@ class YelpAPI {
     private let defaultRadius: Int = 20000
     private var resultsCount = 0
     private var pageOffset = 0
-    
-    // MARK: - Search
-    
-    func searchForRestaurants(keywords: String = YelpAPIConstants.YelpParameterValues.restaurants,
-                              limit: Int,
-                              latitude: Double,
-                              longitude: Double,
-                              completion: @escaping(_ success: Bool, _ error: Error?, _ results: [Restuarant]) -> Void) {
         
+    func getRestaurants(_ parameters: RestaurantSearchParameters) async throws -> [Restuarant] {
+        let (keywords, limit, latitude, longitude) = parameters
+                
         if self.latitude == latitude && self.longitude == longitude {
             if pageOffset < resultsCount - limit {
                 pageOffset += limit
@@ -47,57 +47,45 @@ class YelpAPI {
             self.pageOffset = 0
         }
         
-        let queryItems = [URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.latitude, value: String(latitude)),
-                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.longitude, value: String(longitude)),
-                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.radius, value: String(radius)),
-                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.term, value: keywords),
-                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.limit, value: String(limit)),
-                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.offset, value: String(pageOffset)),
-                          URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.sort_by, value: YelpAPIConstants.YelpParameterValues.best_match),
-                          URLQueryItem(name: YelpAPIConstants.YelpResponseKeys.categories, value: YelpAPIConstants.YelpParameterValues.categories)
+        let queryItems = [
+            URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.latitude, value: String(latitude)),
+            URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.longitude, value: String(longitude)),
+            URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.radius, value: String(radius)),
+            URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.term, value: keywords),
+            URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.limit, value: String(limit)),
+            URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.offset, value: String(pageOffset)),
+            URLQueryItem(name: YelpAPIConstants.YelpParameterKeys.sort_by, value: YelpAPIConstants.YelpParameterValues.best_match),
+            URLQueryItem(name: YelpAPIConstants.YelpResponseKeys.categories, value: YelpAPIConstants.YelpParameterValues.categories)
         ]
         
         var urlComponents = URLComponents(string: YelpAPIConstants.YelpParameterKeys.SearchURL)
         urlComponents?.queryItems = queryItems
         
         guard let url = urlComponents?.url else {
-            completion(false, nil, [])
-            return
+            throw YelpAPIManagerError.urlConfiguration
         }
         
-        let request = NSMutableURLRequest(url: url)
+        var request = URLRequest(url: url)
         request.addValue("\(YelpAPIConstants.YelpParameterKeys.Bearer) \(YelpAPIConstants.YelpParameterValues.API_Key)", forHTTPHeaderField: YelpAPIConstants.YelpParameterKeys.Authorization)
         
-        let session = URLSession.shared
-        let task = session.dataTask(with: request as URLRequest) { data, response, error in
-            if let error = error {
-                completion(false, error, [])
-                return
-            }
-            
-            guard let data = data else {
-                completion(false, error, [])
-                return
-            }
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
             
             var parsedResult: [String: AnyObject]
             do {
                 parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: AnyObject]
             } catch {
-                completion(false, error, [])
-                return
+                throw error
             }
-                       
+            
             guard let totalResultsCount = parsedResult[YelpAPIConstants.YelpResponseKeys.total] as? Int else {
-                completion(false, error, [])
-                return
+                throw YelpAPIManagerError.generic("no results")
             }
             
             self.resultsCount = totalResultsCount
             
             guard let restaurants = parsedResult[YelpAPIConstants.YelpResponseKeys.businesses] as? [[String: AnyObject]] else {
-                completion(false, error, [])
-                return
+                throw YelpAPIManagerError.generic("no restaurant key")
             }
             
             var formattedResults = [Restuarant]()
@@ -119,8 +107,7 @@ class YelpAPI {
                     let categories = restaurant[YelpAPIConstants.YelpResponseKeys.categories],
                     let mainCategory = categories[0] as? [String:String],
                     let mainCategoryTitle = mainCategory[YelpAPIConstants.YelpResponseKeys.title] else {
-                        completion(false, error, [])
-                        return
+                    return
                 }
                 
                 var price = String()
@@ -146,46 +133,37 @@ class YelpAPI {
                     price: price)
                 )
             }
-            completion(true, nil, formattedResults)
+            return formattedResults
+        } catch {
+            throw error
         }
-        task.resume()
     }
     
-    // MARK: Detail
-    
-    func getDetailedRestaurantData(restaurantID: String,
-                                   _ completion: @escaping (_ success: Bool, _ error: Error?, _ restaurantDetail: RestaurantDetail?) -> Void) {
+    func getRestaurantDetail(id restaurantID: String) async throws -> RestaurantDetail {
         guard let escapedID = restaurantID.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            completion(false, nil, nil)
-            return
+            throw YelpAPIManagerError.generic("encoding failed")
         }
         
         let path = "\(YelpAPIConstants.YelpParameterKeys.BusinessesURL)/\(escapedID)"
         
         guard let url = URL(string: path) else {
-            completion(false, nil, nil)
-            return
+            throw YelpAPIManagerError.generic("url failed")
         }
         
-        let request = NSMutableURLRequest(url: url)
+        var request = URLRequest(url: url)
         request.httpMethod = YelpAPIConstants.YelpParameterKeys.Get
         request.addValue("\(YelpAPIConstants.YelpParameterKeys.Bearer) \(YelpAPIConstants.YelpParameterValues.API_Key)", forHTTPHeaderField: YelpAPIConstants.YelpParameterKeys.Authorization)
-        
-        let session = URLSession.shared
-        let task = session.dataTask(with: request as URLRequest) { (data, response, error) in
-            guard let data = data else {
-                completion(false, nil, nil)
-                return
-            }
+                
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
             
             var parsedResult: [String: AnyObject]
             do {
                 parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: AnyObject]
             } catch {
-                completion(false, nil, nil)
-                return
+                throw YelpAPIManagerError.generic("parsing failed")
             }
-                        
+            
             let imageURLs = parsedResult[YelpAPIConstants.YelpResponseKeys.photos] as? [String]
             var isOpen: Int?
             
@@ -211,12 +189,10 @@ class YelpAPI {
                     }
                 }
             }
-            
-            let restaurantDetail = RestaurantDetail(imageURLs: imageURLs, businessHours: businessHours, isOpen: isOpen)
-                        
-            completion(true, nil, restaurantDetail)
+            return RestaurantDetail(imageURLs: imageURLs, businessHours: businessHours, isOpen: isOpen)
+        } catch {
+            throw error
         }
-        task.resume()
     }
 }
 

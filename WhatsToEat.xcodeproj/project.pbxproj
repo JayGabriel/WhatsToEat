@@ -25,6 +25,7 @@
 		6912004B24B906CE00C5DFBA /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6912004A24B906CE00C5DFBA /* UIColor+Extensions.swift */; };
 		6912004D24BC01ED00C5DFBA /* AnimatedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6912004C24BC01ED00C5DFBA /* AnimatedButton.swift */; };
 		6912004F24BCEC6700C5DFBA /* UIAlertController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6912004E24BCEC6700C5DFBA /* UIAlertController+Extensions.swift */; };
+		69576C8B2DFB859C001B818A /* YelpAPIManaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69576C8A2DFB859C001B818A /* YelpAPIManaging.swift */; };
 		695D7F0424A6AA32005E9D83 /* PhotoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D7F0324A6AA32005E9D83 /* PhotoDetailViewController.swift */; };
 		695D7F0924A6AD65005E9D83 /* SupplementaryImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695D7F0824A6AD65005E9D83 /* SupplementaryImageCollectionViewCell.swift */; };
 		69628BE124EC3A8A0021F120 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69628BE024EC3A8A0021F120 /* AboutViewController.swift */; };
@@ -84,6 +85,7 @@
 		6912004A24B906CE00C5DFBA /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		6912004C24BC01ED00C5DFBA /* AnimatedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedButton.swift; sourceTree = "<group>"; };
 		6912004E24BCEC6700C5DFBA /* UIAlertController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Extensions.swift"; sourceTree = "<group>"; };
+		69576C8A2DFB859C001B818A /* YelpAPIManaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YelpAPIManaging.swift; sourceTree = "<group>"; };
 		695D7F0324A6AA32005E9D83 /* PhotoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewController.swift; sourceTree = "<group>"; };
 		695D7F0824A6AD65005E9D83 /* SupplementaryImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		69628BE024EC3A8A0021F120 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutViewController.swift; path = WhatsToEat/Features/AboutViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -186,7 +188,6 @@
 				69063DC924636A5F00136732 /* LaunchScreen.storyboard */,
 				69063DF124636E5D00136732 /* Home */,
 				69063DF324636E7A00136732 /* RestaurantDetail */,
-				69063DF224636E6500136732 /* Settings */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -210,21 +211,14 @@
 		69063DF124636E5D00136732 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				699E5416247CACCC0065D761 /* TableViewCells */,
 				69063DBF24636A5A00136732 /* HomeViewController.swift */,
 				69063DF52463782500136732 /* HomeViewModel.swift */,
 				69063DF72464D24E00136732 /* SearchView.swift */,
 				845B4035248848EC00FA1E3D /* ToolbarView.swift */,
-				699E5416247CACCC0065D761 /* TableViewCells */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
-		69063DF224636E6500136732 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
 				69628BE024EC3A8A0021F120 /* AboutViewController.swift */,
 			);
-			path = Settings;
+			path = Home;
 			sourceTree = "<group>";
 		};
 		69063DF324636E7A00136732 /* RestaurantDetail */ = {
@@ -252,6 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				69063DFA24665D2400136732 /* YelpAPI.swift */,
+				69576C8A2DFB859C001B818A /* YelpAPIManaging.swift */,
 				69063DFC24665DD400136732 /* YelpAPIConstants.swift */,
 			);
 			path = Networking;
@@ -415,6 +410,7 @@
 			files = (
 				58F3A059249D39ED00D48F50 /* RestaurantDetailViewModel.swift in Sources */,
 				6912004F24BCEC6700C5DFBA /* UIAlertController+Extensions.swift in Sources */,
+				69576C8B2DFB859C001B818A /* YelpAPIManaging.swift in Sources */,
 				695D7F0424A6AA32005E9D83 /* PhotoDetailViewController.swift in Sources */,
 				699E5413247725310065D761 /* Restaurant.swift in Sources */,
 				58F3A057249D39B100D48F50 /* RestaurantDetailViewController.swift in Sources */,
